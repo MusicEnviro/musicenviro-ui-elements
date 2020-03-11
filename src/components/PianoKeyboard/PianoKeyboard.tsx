@@ -14,8 +14,6 @@ export function PianoKeyboard(props: IPianoKeyboardProps) {
 			canvas.width = canvas.offsetWidth;
 			canvas.height = canvas.offsetHeight;
 
-			console.log(canvas.width, canvas.height);
-
 			const ctx = canvas.getContext("2d");
 
 			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
