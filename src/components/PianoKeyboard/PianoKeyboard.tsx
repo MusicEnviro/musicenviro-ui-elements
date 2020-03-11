@@ -30,12 +30,11 @@ export function PianoKeyboard(props: IPianoKeyboardProps) {
 	});
 
 	return (
-		<div style={{ width: "auto", height: "100px" }}>
+		<div style={{ height: "100px" }}>
 			<canvas
 				ref={canvasRef}
 				className="keyboard"
-				style={{ width: "100%", height: "100px" }}
-				height="100"
+				style={{ width: "100%", height: "100%" }}
 				onClick={(e: any) => {
 					console.log(canvasRef);
 					const canvas = canvasRef.current as HTMLCanvasElement;
