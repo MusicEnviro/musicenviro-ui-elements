@@ -1,1 +1,1 @@
-export * from "./components/PianoKeyboard";
+export * from "./components/PianoKeyboard/PianoKeyboard";
