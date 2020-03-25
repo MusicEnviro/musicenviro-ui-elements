@@ -2,9 +2,18 @@ import * as React from "react";
 import { IPianoKeyboardProps } from "./@types";
 import { drawKeyboardInCanvas } from "./drawKeyboardInCanvas";
 
+const defaultProps: IPianoKeyboardProps = {
+	onNoteDown: () => {},
+	onNoteUp: () => {},
+	keyRange: {
+		min: 48,
+		max: 72
+	}
+}
+
 export function PianoKeyboard(props: IPianoKeyboardProps) {
 	const canvasRef = React.useRef(null);
-	const [drawStamp, setDrawStamp] = React.useState();
+	const [drawStamp, setDrawStamp] = React.useState<number>();
 
 	function redraw() {
 		if (!drawStamp || Date.now() - drawStamp > 500) {
@@ -43,3 +52,6 @@ export function PianoKeyboard(props: IPianoKeyboardProps) {
 		</div>
 	);
 }
+
+PianoKeyboard.defaultProps = defaultProps
+

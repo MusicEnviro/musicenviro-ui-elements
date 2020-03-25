@@ -1,16 +1,5 @@
 import { IPianoKeyboardProps } from "./@types";
-
-// TODO: lift to base package
-type Pixels = number;
-type MidiPitch = number;
-
-// TODO: lift to base package
-interface IRect {
-	left: Pixels;
-	top: Pixels;
-	right: Pixels;
-	bottom: Pixels;
-}
+import { IRect, MidiPitch, Pixels } from "../../@types"
 
 interface IKey {
 	type: "White" | "Black";

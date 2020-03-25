@@ -4,17 +4,21 @@
 	"description": "music-related UI elements",
 	"main": "lib/index.js",
 	"scripts": {
-		"start": "ts-node src/index.ts"
+		"start": "ts-node src/index.ts",
+		"view": "tsc && browserify lib/simple-client/index.js -o simple-client/bundle.js && open simple-client/index.html"
 	},
 	"author": "Geof Holbrook",
 	"license": "ISC",
 	"dependencies": {
+		"lodash": "^4.17.15",
 		"react": "^16.12.0",
 		"ts-node": "^8.6.2"
 	},
 	"devDependencies": {
+		"@types/lodash": "^4.14.149",
 		"@types/node": "^13.7.1",
 		"@types/react": "^16.9.20",
+		"@types/react-dom": "^16.9.5",
 		"@typescript-eslint/eslint-plugin": "^2.19.2",
 		"@typescript-eslint/parser": "^2.19.2",
 		"eslint": "^6.8.0",
@@ -22,6 +26,7 @@
 		"eslint-plugin-prettier": "^3.1.2",
 		"eslint-plugin-react": "^7.18.3",
 		"prettier": "^1.19.1",
+		"react-dom": "^16.13.1",
 		"typescript": "^3.7.5"
 	}
 }
