@@ -83,7 +83,6 @@ function drawFingersInCanvas(ctx: CanvasRenderingContext2D, props: IGuitarChordD
         
         const x = xCoords[string]
         const y = yCoords[fret]
-        console.log(string, fret, x, y)
 
         ctx.lineWidth = 3
         ctx.beginPath();

@@ -96,7 +96,6 @@ function drawFingersInCanvas(ctx, props) {
     function drawFinger(string, fret, type) {
         var x = xCoords[string];
         var y = yCoords[fret];
-        console.log(string, fret, x, y);
         ctx.lineWidth = 3;
         ctx.beginPath();
         switch (type) {
