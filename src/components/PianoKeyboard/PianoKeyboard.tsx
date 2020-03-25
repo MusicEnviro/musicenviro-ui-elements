@@ -7,7 +7,7 @@ const defaultProps: IPianoKeyboardProps = {
 	onNoteDown: () => { },
 	onNoteUp: () => { },
 	keyRange: {
-		min: 48,
+		min: 36,
 		max: 72
 	}
 }
