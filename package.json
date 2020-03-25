@@ -5,7 +5,8 @@
 	"main": "lib/index.js",
 	"scripts": {
 		"start": "ts-node src/index.ts",
-		"view": "tsc && browserify lib/simple-client/index.js -o simple-client/bundle.js && open simple-client/index.html"
+		"view": "tsc && browserify lib/simple-client/index.js -o simple-client/bundle.js && open simple-client/index.html",
+		"watch": "watchify lib/simple-client/index.js -o simple-client/bundle.js"
 	},
 	"author": "Geof Holbrook",
 	"license": "ISC",
