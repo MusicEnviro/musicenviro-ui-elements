@@ -1,7 +1,9 @@
 import * as React from "react";
-import { IGuitarChordDiagramProps } from "./@types";
+import { IGuitarChordDiagramProps, IFingeredNote } from "./@types";
 import { drawDiagramInCanvas } from "./drawDiagramInCanvas";
 import { LazyCanvasRedrawer } from "../LazyCanvasRedrawer";
+
+export { IGuitarChordDiagramProps, IFingeredNote }
 
 const defaultProps: IGuitarChordDiagramProps = {
 	position: null,
@@ -17,16 +19,15 @@ export class GuitarChordDiagram extends LazyCanvasRedrawer<IGuitarChordDiagramPr
 
 	render() {
 		return (
-			<div>
-				<canvas
+			<canvas
+					height={150}
+					width={150}
 					ref={this.ref}
 					className="guitar-chord-diagram"
-					style={{ width: "100%", height: "100%" }}
 					onClick={(e: any) => {
 						// 
 					}}
-				></canvas>
-			</div>
+			></canvas>
 		);
 	}
 

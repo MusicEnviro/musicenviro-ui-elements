@@ -15,11 +15,16 @@ export class LazyCanvasRedrawer<T> extends React.Component<T> {
         // specialize this
     }
     
-    redraw() {
-		if (!this.drawStamp || Date.now() - this.drawStamp > 500) {
+    redraw(force: boolean = false) {
+		if (force || !this.drawStamp || Date.now() - this.drawStamp > 500) {
 			this.drawStamp = Date.now()
 
 			const canvas = this.ref.current as HTMLCanvasElement;
+
+			// Make it visually fill the positioned parent
+			canvas.style.width ='100%';
+			canvas.style.height='100%';
+			// ...then set the internal size to match
 			canvas.width = canvas.offsetWidth;
 			canvas.height = canvas.offsetHeight;
 
@@ -44,6 +49,6 @@ export class LazyCanvasRedrawer<T> extends React.Component<T> {
 	}
 
 	componentDidUpdate() {
-		this.redraw();
+		this.redraw(true);
 	}
 }
