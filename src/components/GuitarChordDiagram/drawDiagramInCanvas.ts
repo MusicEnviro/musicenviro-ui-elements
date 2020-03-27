@@ -17,11 +17,14 @@ export function drawDiagramInCanvas(
     return drawFingersInCanvas(ctx, props)
 }
 
-function getFretYCoords(height: Pixels, numFrets: number): Pixels[] {
-    const result: number[] = [];
-    const fretHeight = height / numFrets
+function getFretLineYCoords(height: Pixels, numFrets: number): Pixels[] {
     // margin is half a fret height
-    for (let i = 0; i < numFrets; i++) {
+    // there are numFrets + 1 lines (numFrets is the number of places your finger can go!)
+    
+    const result: number[] = [];
+    
+    const fretHeight = height / (numFrets + 1)
+    for (let i = 0; i < numFrets + 1; i++) {
         result.push(fretHeight * (i + 0.5))
     }
 
@@ -38,7 +41,7 @@ function getStringXCoords(width: Pixels): Pixels[] {
 
 function drawGridInCanvas(ctx: CanvasRenderingContext2D, numFrets: number, color: string): void {
     const xCoords = getStringXCoords(ctx.canvas.width)
-    const yCoords = getFretYCoords(ctx.canvas.height, numFrets)
+    const yCoords = getFretLineYCoords(ctx.canvas.height, numFrets)
 
     ctx.strokeStyle = color
     ctx.lineWidth = 3
@@ -60,9 +63,12 @@ function drawGridInCanvas(ctx: CanvasRenderingContext2D, numFrets: number, color
 
 function drawFingersInCanvas(ctx: CanvasRenderingContext2D, props: IGuitarChordDiagramProps): IFinger[] {
     const xCoords = getStringXCoords(ctx.canvas.width)
-    const yCoords = getFretYCoords(ctx.canvas.height, props.numFrets)
+    const yCoords = getFretLineYCoords(ctx.canvas.height, props.numFrets)
 
-    const radius = Math.min(xCoords[1] - xCoords[0], yCoords[1] - yCoords[0]) * 0.25
+    const fretHeight = yCoords[1] - yCoords[0]
+    const stringWidth = xCoords[1] - xCoords[0]
+
+    const radius = Math.min(stringWidth, fretHeight) * 0.25
 
     return props.fingeredNotes.map(note => {
         const fingering = getStringAndFret(note.semitonesFromBase, props.position)
@@ -82,7 +88,7 @@ function drawFingersInCanvas(ctx: CanvasRenderingContext2D, props: IGuitarChordD
     function drawFinger(string: number, fret: number, type: 'TonicCircle' | 'NonTonicCircle' | 'Diamond') {
         
         const x = xCoords[string]
-        const y = yCoords[fret]
+        const y = yCoords[fret] + fretHeight / 2
 
         ctx.lineWidth = 3
         ctx.beginPath();

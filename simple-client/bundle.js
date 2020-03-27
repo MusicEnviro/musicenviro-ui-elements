@@ -32,9 +32,8 @@ var GuitarChordDiagram = (function (_super) {
         drawDiagramInCanvas_1.drawDiagramInCanvas(ctx, this.props);
     };
     GuitarChordDiagram.prototype.render = function () {
-        return (React.createElement("div", null,
-            React.createElement("canvas", { ref: this.ref, className: "guitar-chord-diagram", style: { width: "100%", height: "100%" }, onClick: function (e) {
-                } })));
+        return (React.createElement("canvas", { height: 150, width: 150, ref: this.ref, className: "guitar-chord-diagram", onClick: function (e) {
+            } }));
     };
     GuitarChordDiagram.defaultProps = defaultProps;
     return GuitarChordDiagram;
@@ -51,10 +50,10 @@ function drawDiagramInCanvas(ctx, props) {
     return drawFingersInCanvas(ctx, props);
 }
 exports.drawDiagramInCanvas = drawDiagramInCanvas;
-function getFretYCoords(height, numFrets) {
+function getFretLineYCoords(height, numFrets) {
     var result = [];
-    var fretHeight = height / numFrets;
-    for (var i = 0; i < numFrets; i++) {
+    var fretHeight = height / (numFrets + 1);
+    for (var i = 0; i < numFrets + 1; i++) {
         result.push(fretHeight * (i + 0.5));
     }
     return result;
@@ -65,7 +64,7 @@ function getStringXCoords(width) {
 }
 function drawGridInCanvas(ctx, numFrets, color) {
     var xCoords = getStringXCoords(ctx.canvas.width);
-    var yCoords = getFretYCoords(ctx.canvas.height, numFrets);
+    var yCoords = getFretLineYCoords(ctx.canvas.height, numFrets);
     ctx.strokeStyle = color;
     ctx.lineWidth = 3;
     xCoords.forEach(function (x) {
@@ -80,8 +79,10 @@ function drawGridInCanvas(ctx, numFrets, color) {
 }
 function drawFingersInCanvas(ctx, props) {
     var xCoords = getStringXCoords(ctx.canvas.width);
-    var yCoords = getFretYCoords(ctx.canvas.height, props.numFrets);
-    var radius = Math.min(xCoords[1] - xCoords[0], yCoords[1] - yCoords[0]) * 0.25;
+    var yCoords = getFretLineYCoords(ctx.canvas.height, props.numFrets);
+    var fretHeight = yCoords[1] - yCoords[0];
+    var stringWidth = xCoords[1] - xCoords[0];
+    var radius = Math.min(stringWidth, fretHeight) * 0.25;
     return props.fingeredNotes.map(function (note) {
         var fingering = getStringAndFret_1.getStringAndFret(note.semitonesFromBase, props.position);
         if (fingering.alternates.length > 0) {
@@ -95,7 +96,7 @@ function drawFingersInCanvas(ctx, props) {
     }).filter(Boolean);
     function drawFinger(string, fret, type) {
         var x = xCoords[string];
-        var y = yCoords[fret];
+        var y = yCoords[fret] + fretHeight / 2;
         ctx.lineWidth = 3;
         ctx.beginPath();
         switch (type) {
@@ -165,10 +166,13 @@ var LazyCanvasRedrawer = (function (_super) {
     }
     LazyCanvasRedrawer.prototype.draw = function (ctx) {
     };
-    LazyCanvasRedrawer.prototype.redraw = function () {
-        if (!this.drawStamp || Date.now() - this.drawStamp > 500) {
+    LazyCanvasRedrawer.prototype.redraw = function (force) {
+        if (force === void 0) { force = false; }
+        if (force || !this.drawStamp || Date.now() - this.drawStamp > 500) {
             this.drawStamp = Date.now();
             var canvas = this.ref.current;
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
             var ctx = canvas.getContext("2d");
@@ -187,7 +191,7 @@ var LazyCanvasRedrawer = (function (_super) {
         window.removeEventListener("resize", this.handleResize);
     };
     LazyCanvasRedrawer.prototype.componentDidUpdate = function () {
-        this.redraw();
+        this.redraw(true);
     };
     return LazyCanvasRedrawer;
 }(React.Component));
