@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('main')
     
     render(
-        createElement(GuitarChordDiagram, null),
+        createElement(PianoKeyboard, null),
         container
     )
 

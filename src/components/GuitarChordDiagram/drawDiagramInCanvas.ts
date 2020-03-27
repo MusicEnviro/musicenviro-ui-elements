@@ -1,13 +1,25 @@
+// =============================================================================
+// imports
+// =============================================================================
+
 import * as _ from 'lodash'
 import { IGuitarChordDiagramProps } from "./@types";
-import { Pixels, MidiPitch, IRect } from '../../@types'
+import { Pixels, MidiPitch, IRect } from '@musicenviro/base'
 import { getStringAndFret } from './getStringAndFret';
+
+// =============================================================================
+// types
+// =============================================================================
 
 interface IFinger {
     isTonic: boolean;
     rect: IRect;
     pitch: MidiPitch;
 }
+
+// =============================================================================
+// main
+// =============================================================================
 
 export function drawDiagramInCanvas(
     ctx: CanvasRenderingContext2D,
@@ -16,6 +28,10 @@ export function drawDiagramInCanvas(
     drawGridInCanvas(ctx, props.numFrets, props.color)
     return drawFingersInCanvas(ctx, props)
 }
+
+// =============================================================================
+// helpers
+// =============================================================================
 
 function getFretLineYCoords(height: Pixels, numFrets: number): Pixels[] {
     // margin is half a fret height
@@ -83,7 +99,10 @@ function drawFingersInCanvas(ctx: CanvasRenderingContext2D, props: IGuitarChordD
         return null
     }).filter(Boolean)
 
+    // -------------------------------------------------------------------------
     // function-scope helpers
+    // -------------------------------------------------------------------------
+    
 
     function drawFinger(string: number, fret: number, type: 'TonicCircle' | 'NonTonicCircle' | 'Diamond') {
         
@@ -118,6 +137,4 @@ function drawFingersInCanvas(ctx: CanvasRenderingContext2D, props: IGuitarChordD
 
         ctx.stroke()
     }
-
-
 }

@@ -12,7 +12,7 @@ const defaultProps: IGuitarChordDiagramProps = {
 	color: 'black'
 }
 
-export class GuitarChordDiagram extends LazyCanvasRedrawer<IGuitarChordDiagramProps> {
+export class GuitarChordDiagram extends LazyCanvasRedrawer<IGuitarChordDiagramProps, {}> {
 	draw(ctx: CanvasRenderingContext2D) {
 		drawDiagramInCanvas(ctx, this.props);
 	}

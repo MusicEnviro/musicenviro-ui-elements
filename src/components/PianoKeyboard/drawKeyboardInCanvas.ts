@@ -1,28 +1,24 @@
-import { IPianoKeyboardProps } from "./@types";
-import { IRect, MidiPitch, Pixels } from "../../@types"
+import { IPianoKeyboardProps, IKey } from "./@types";
+import { MidiPitch, Pixels } from '@musicenviro/base'
 
-interface IKey {
-	type: "White" | "Black";
-	rect: IRect;
-	pitch: MidiPitch;
-}
 
 const blackKeyHeightRatio = 0.6;
 
 export function drawKeyboardInCanvas(
 	ctx: CanvasRenderingContext2D,
-	props: IPianoKeyboardProps
+	props: IPianoKeyboardProps,
+	selectedKeys: number[]
 ): IKey[] {
 	const whiteKeys = getWhiteKeys(props, ctx.canvas.width, ctx.canvas.height);
 	const blackKeys = getBlackKeys(whiteKeys);
 
-	[...whiteKeys, ...blackKeys].forEach(key => drawKeyInCanvas(ctx, key));
+	[...whiteKeys, ...blackKeys].forEach(key => drawKeyInCanvas(ctx, key, selectedKeys.includes(key.pitch)));
 
 	return [...whiteKeys, ...blackKeys];
 }
 
-function drawKeyInCanvas(ctx: CanvasRenderingContext2D, key: IKey) {
-	ctx.fillStyle = key.type === "White" ? "white" : "black";
+function drawKeyInCanvas(ctx: CanvasRenderingContext2D, key: IKey, isSelected: boolean) {
+	ctx.fillStyle = getFillStyle()
 	ctx.strokeStyle = "black";
 
 	ctx.fillRect(
@@ -38,6 +34,26 @@ function drawKeyInCanvas(ctx: CanvasRenderingContext2D, key: IKey) {
 		key.rect.right - key.rect.left,
 		key.rect.bottom - key.rect.top
 	);
+
+	// -----------------------------------------------------------------------------
+	// function-scope helpers
+	// -----------------------------------------------------------------------------
+
+	function getFillStyle() {
+		if (key.type === 'White') {
+			if (isSelected) {
+				return 'lightblue'
+			} else {
+				return 'white'
+			}
+		} else {
+			if (isSelected) {
+				return 'blue'
+			} else {
+				return 'black'
+			}
+		}
+	}
 }
 
 function midiPitchIsWhite(note: MidiPitch): boolean {

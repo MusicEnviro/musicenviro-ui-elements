@@ -1,2 +1,3 @@
-export * from "./components/PianoKeyboard/PianoKeyboard";
-export * from "./components/GuitarChordDiagram/GuitarChordDiagram";
+export { PianoKeyboard, IPianoKeyboardProps} from "./components/PianoKeyboard/PianoKeyboard";
+
+export { GuitarChordDiagram, IGuitarChordDiagramProps, IFingeredNote } from "./components/GuitarChordDiagram/GuitarChordDiagram";
