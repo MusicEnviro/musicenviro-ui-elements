@@ -69,7 +69,7 @@ var LazyCanvasRedrawer = (function (_super) {
 }(React.Component));
 exports.LazyCanvasRedrawer = LazyCanvasRedrawer;
 
-},{"debounce":9,"react":18}],2:[function(require,module,exports){
+},{"debounce":10,"react":19}],2:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -96,6 +96,7 @@ var React = require("react");
 var drawKeyboardInCanvas_1 = require("./drawKeyboardInCanvas");
 var LazyCanvasRedrawer_1 = require("../LazyCanvasRedrawer");
 var base_1 = require("@musicenviro/base");
+var clickedPointInCanvas_1 = require("../../utils/clickedPointInCanvas");
 var defaultProps = {
     onNoteDown: function () { },
     onNoteUp: function () { },
@@ -116,12 +117,9 @@ var PianoKeyboard = (function (_super) {
     }
     PianoKeyboard.prototype.draw = function (ctx) {
         this.keys = drawKeyboardInCanvas_1.drawKeyboardInCanvas(ctx, this.props, Array.from(this.state.depressedKeys));
-        console.log(this.state.depressedKeys);
     };
     PianoKeyboard.prototype.handleClick = function (e) {
-        var rect = this.ref.current.getBoundingClientRect();
-        var key = this.getKeyUnderPoint({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-        console.log(e.offsetX, e.offsetY);
+        var key = this.getKeyUnderPoint(clickedPointInCanvas_1.clickedPointInCanvas(this.ref.current, e));
         if (key) {
             this.setState(function (prevState, props) {
                 var prevDep = prevState.depressedKeys;
@@ -134,27 +132,31 @@ var PianoKeyboard = (function (_super) {
         }
     };
     PianoKeyboard.prototype.getKeyUnderPoint = function (point) {
-        var blackKeys = this.keys.filter(function (key) { return key.type === 'Black'; });
-        var blackKeyUnderPoint = blackKeys.find(function (key) { return base_1.pointInRect(point, key.rect); });
+        var blackKeys = this.keys.filter(function (key) { return key.type === "Black"; });
+        var blackKeyUnderPoint = blackKeys.find(function (key) {
+            return base_1.pointInRect(point, key.rect);
+        });
         if (blackKeyUnderPoint) {
             return blackKeyUnderPoint;
         }
         else {
-            var whiteKeys = this.keys.filter(function (key) { return key.type === 'White'; });
-            var whiteKeyUnderPoint = whiteKeys.find(function (key) { return base_1.pointInRect(point, key.rect); });
+            var whiteKeys = this.keys.filter(function (key) { return key.type === "White"; });
+            var whiteKeyUnderPoint = whiteKeys.find(function (key) {
+                return base_1.pointInRect(point, key.rect);
+            });
             return whiteKeyUnderPoint || null;
         }
     };
     PianoKeyboard.prototype.render = function () {
         var _this = this;
-        return (React.createElement("canvas", { height: '200px', ref: this.ref, className: "keyboard", style: { width: "100%", height: "100%" }, onClick: function (e) { return _this.handleClick(e); } }));
+        return (React.createElement("canvas", { height: "200px", ref: this.ref, className: "keyboard", style: { width: "100%", height: "100%" }, onClick: function (e) { return _this.handleClick(e); } }));
     };
     PianoKeyboard.defaultProps = defaultProps;
     return PianoKeyboard;
 }(LazyCanvasRedrawer_1.LazyCanvasRedrawer));
 exports.PianoKeyboard = PianoKeyboard;
 
-},{"../LazyCanvasRedrawer":1,"./drawKeyboardInCanvas":3,"@musicenviro/base":7,"react":18}],3:[function(require,module,exports){
+},{"../../utils/clickedPointInCanvas":5,"../LazyCanvasRedrawer":1,"./drawKeyboardInCanvas":3,"@musicenviro/base":8,"react":19}],3:[function(require,module,exports){
 "use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -255,7 +257,17 @@ document.addEventListener('DOMContentLoaded', function () {
     react_dom_1.render(react_1.createElement(PianoKeyboard_1.PianoKeyboard, null), container);
 });
 
-},{"../components/PianoKeyboard/PianoKeyboard":2,"react":18,"react-dom":15}],5:[function(require,module,exports){
+},{"../components/PianoKeyboard/PianoKeyboard":2,"react":19,"react-dom":16}],5:[function(require,module,exports){
+"use strict";
+exports.__esModule = true;
+function clickedPointInCanvas(canvas, e) {
+    var rect = canvas.getBoundingClientRect();
+    var clickedPoint = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    return clickedPoint;
+}
+exports.clickedPointInCanvas = clickedPointInCanvas;
+
+},{}],6:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -263,7 +275,7 @@ function __export(m) {
 exports.__esModule = true;
 __export(require("./rect"));
 
-},{"./rect":6}],6:[function(require,module,exports){
+},{"./rect":7}],7:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 function pointInRect(point, rect) {
@@ -274,7 +286,7 @@ function pointInRect(point, rect) {
 }
 exports.pointInRect = pointInRect;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -283,7 +295,7 @@ exports.__esModule = true;
 __export(require("./graphics"));
 __export(require("./musical-data"));
 
-},{"./graphics":5,"./musical-data":8}],8:[function(require,module,exports){
+},{"./graphics":6,"./musical-data":9}],9:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 function pitchClass(note) {
@@ -291,7 +303,7 @@ function pitchClass(note) {
 }
 exports.pitchClass = pitchClass;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
@@ -363,7 +375,7 @@ debounce.debounce = debounce;
 
 module.exports = debounce;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -455,7 +467,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -561,7 +573,7 @@ checkPropTypes.resetWarningCache = function() {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":12,"_process":25}],12:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":13,"_process":26}],13:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -575,7 +587,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (process){
 /** @license React v16.13.1
  * react-dom.development.js
@@ -25591,7 +25603,7 @@ exports.version = ReactVersion;
 }
 
 }).call(this,require('_process'))
-},{"_process":25,"object-assign":10,"prop-types/checkPropTypes":11,"react":18,"scheduler":23,"scheduler/tracing":24}],14:[function(require,module,exports){
+},{"_process":26,"object-assign":11,"prop-types/checkPropTypes":12,"react":19,"scheduler":24,"scheduler/tracing":25}],15:[function(require,module,exports){
 /** @license React v16.13.1
  * react-dom.production.min.js
  *
@@ -25885,7 +25897,7 @@ exports.flushSync=function(a,b){if((W&(fj|gj))!==V)throw Error(u(187));var c=W;W
 exports.unmountComponentAtNode=function(a){if(!gk(a))throw Error(u(40));return a._reactRootContainer?(Nj(function(){ik(null,null,a,!1,function(){a._reactRootContainer=null;a[Od]=null})}),!0):!1};exports.unstable_batchedUpdates=Mj;exports.unstable_createPortal=function(a,b){return kk(a,b,2<arguments.length&&void 0!==arguments[2]?arguments[2]:null)};
 exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!gk(c))throw Error(u(200));if(null==a||void 0===a._reactInternalFiber)throw Error(u(38));return ik(a,b,c,!1,d)};exports.version="16.13.1";
 
-},{"object-assign":10,"react":18,"scheduler":23}],15:[function(require,module,exports){
+},{"object-assign":11,"react":19,"scheduler":24}],16:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25927,7 +25939,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":13,"./cjs/react-dom.production.min.js":14,"_process":25}],16:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":14,"./cjs/react-dom.production.min.js":15,"_process":26}],17:[function(require,module,exports){
 (function (process){
 /** @license React v16.12.0
  * react.development.js
@@ -28251,7 +28263,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":25,"object-assign":10,"prop-types/checkPropTypes":11}],17:[function(require,module,exports){
+},{"_process":26,"object-assign":11,"prop-types/checkPropTypes":12}],18:[function(require,module,exports){
 /** @license React v16.12.0
  * react.production.min.js
  *
@@ -28278,7 +28290,7 @@ b,c){return W().useImperativeHandle(a,b,c)},useDebugValue:function(){},useLayout
 if(null!=b){void 0!==b.ref&&(g=b.ref,l=J.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(k in b)K.call(b,k)&&!L.hasOwnProperty(k)&&(e[k]=void 0===b[k]&&void 0!==f?f[k]:b[k])}var k=arguments.length-2;if(1===k)e.children=c;else if(1<k){f=Array(k);for(var m=0;m<k;m++)f[m]=arguments[m+2];e.children=f}return{$$typeof:p,type:a.type,key:d,ref:g,props:e,_owner:l}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.12.0",
 __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentDispatcher:I,ReactCurrentBatchConfig:{suspense:null},ReactCurrentOwner:J,IsSomeRendererActing:{current:!1},assign:h}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":10}],18:[function(require,module,exports){
+},{"object-assign":11}],19:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -28289,7 +28301,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":16,"./cjs/react.production.min.js":17,"_process":25}],19:[function(require,module,exports){
+},{"./cjs/react.development.js":17,"./cjs/react.production.min.js":18,"_process":26}],20:[function(require,module,exports){
 (function (process){
 /** @license React v0.19.1
  * scheduler-tracing.development.js
@@ -28642,7 +28654,7 @@ exports.unstable_wrap = unstable_wrap;
 }
 
 }).call(this,require('_process'))
-},{"_process":25}],20:[function(require,module,exports){
+},{"_process":26}],21:[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler-tracing.production.min.js
  *
@@ -28654,7 +28666,7 @@ exports.unstable_wrap = unstable_wrap;
 
 'use strict';var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_subscribe=function(){};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_unsubscribe=function(){};exports.unstable_wrap=function(a){return a};
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 (function (process){
 /** @license React v0.19.1
  * scheduler.development.js
@@ -29516,7 +29528,7 @@ exports.unstable_wrapCallback = unstable_wrapCallback;
 }
 
 }).call(this,require('_process'))
-},{"_process":25}],22:[function(require,module,exports){
+},{"_process":26}],23:[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler.production.min.js
  *
@@ -29539,7 +29551,7 @@ exports.unstable_getCurrentPriorityLevel=function(){return R};exports.unstable_g
 exports.unstable_scheduleCallback=function(a,b,c){var d=exports.unstable_now();if("object"===typeof c&&null!==c){var e=c.delay;e="number"===typeof e&&0<e?d+e:d;c="number"===typeof c.timeout?c.timeout:Y(a)}else c=Y(a),e=d;c=e+c;a={id:P++,callback:b,priorityLevel:a,startTime:e,expirationTime:c,sortIndex:-1};e>d?(a.sortIndex=e,J(O,a),null===L(N)&&a===L(O)&&(U?h():U=!0,g(W,e-d))):(a.sortIndex=c,J(N,a),T||S||(T=!0,f(X)));return a};
 exports.unstable_shouldYield=function(){var a=exports.unstable_now();V(a);var b=L(N);return b!==Q&&null!==Q&&null!==b&&null!==b.callback&&b.startTime<=a&&b.expirationTime<Q.expirationTime||k()};exports.unstable_wrapCallback=function(a){var b=R;return function(){var c=R;R=b;try{return a.apply(this,arguments)}finally{R=c}}};
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -29550,7 +29562,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":21,"./cjs/scheduler.production.min.js":22,"_process":25}],24:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":22,"./cjs/scheduler.production.min.js":23,"_process":26}],25:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -29561,7 +29573,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":19,"./cjs/scheduler-tracing.production.min.js":20,"_process":25}],25:[function(require,module,exports){
+},{"./cjs/scheduler-tracing.development.js":20,"./cjs/scheduler-tracing.production.min.js":21,"_process":26}],26:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
