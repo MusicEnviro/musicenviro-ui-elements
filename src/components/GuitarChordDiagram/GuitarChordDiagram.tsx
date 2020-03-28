@@ -24,9 +24,6 @@ export class GuitarChordDiagram extends LazyCanvasRedrawer<IGuitarChordDiagramPr
 					width={150}
 					ref={this.ref}
 					className="guitar-chord-diagram"
-					onClick={(e: any) => {
-						// 
-					}}
 			></canvas>
 		);
 	}

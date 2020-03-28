@@ -15,8 +15,6 @@ const defaultProps: IPianoKeyboardProps = {
 
 export { IPianoKeyboardProps }
 
-
-
 export class PianoKeyboard extends LazyCanvasRedrawer<IPianoKeyboardProps, IPianoKeyboardState> {
 	constructor(props: IPianoKeyboardProps) {
 		super(props)
@@ -33,7 +31,9 @@ export class PianoKeyboard extends LazyCanvasRedrawer<IPianoKeyboardProps, IPian
 	}
 
 	handleClick(e: MouseEvent) {
-		const key = this.getKeyUnderPoint({x: e.clientX, y: e.clientY})
+		const rect = this.ref.current.getBoundingClientRect();
+		const key = this.getKeyUnderPoint({x: e.clientX - rect.left, y: e.clientY - rect.top})
+		console.log(e.offsetX, e.offsetY)	
 		if (key) {
 			this.setState((prevState, props) => {
 				const prevDep = prevState.depressedKeys

@@ -1,41 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-exports.__esModule = true;
-__export(require("./rect"));
-
-},{"./rect":2}],2:[function(require,module,exports){
-"use strict";
-exports.__esModule = true;
-function pointInRect(point, rect) {
-    return (point.x >= rect.left &&
-        point.x <= rect.right &&
-        point.y >= rect.top &&
-        point.y <= rect.bottom);
-}
-exports.pointInRect = pointInRect;
-
-},{}],3:[function(require,module,exports){
-"use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-exports.__esModule = true;
-__export(require("./graphics"));
-__export(require("./musical-data"));
-
-},{"./graphics":1,"./musical-data":4}],4:[function(require,module,exports){
-"use strict";
-exports.__esModule = true;
-function pitchClass(note) {
-    return note % 12;
-}
-exports.pitchClass = pitchClass;
-
-},{}],5:[function(require,module,exports){
-"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -105,7 +69,7 @@ var LazyCanvasRedrawer = (function (_super) {
 }(React.Component));
 exports.LazyCanvasRedrawer = LazyCanvasRedrawer;
 
-},{"debounce":9,"react":18}],6:[function(require,module,exports){
+},{"debounce":9,"react":18}],2:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -155,7 +119,9 @@ var PianoKeyboard = (function (_super) {
         console.log(this.state.depressedKeys);
     };
     PianoKeyboard.prototype.handleClick = function (e) {
-        var key = this.getKeyUnderPoint({ x: e.clientX, y: e.clientY });
+        var rect = this.ref.current.getBoundingClientRect();
+        var key = this.getKeyUnderPoint({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        console.log(e.offsetX, e.offsetY);
         if (key) {
             this.setState(function (prevState, props) {
                 var prevDep = prevState.depressedKeys;
@@ -188,7 +154,7 @@ var PianoKeyboard = (function (_super) {
 }(LazyCanvasRedrawer_1.LazyCanvasRedrawer));
 exports.PianoKeyboard = PianoKeyboard;
 
-},{"../LazyCanvasRedrawer":5,"./drawKeyboardInCanvas":7,"@musicenviro/base":3,"react":18}],7:[function(require,module,exports){
+},{"../LazyCanvasRedrawer":1,"./drawKeyboardInCanvas":3,"@musicenviro/base":7,"react":18}],3:[function(require,module,exports){
 "use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
@@ -278,7 +244,7 @@ function getBlackKeys(whiteKeys) {
     });
 }
 
-},{}],8:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 var react_dom_1 = require("react-dom");
@@ -289,7 +255,43 @@ document.addEventListener('DOMContentLoaded', function () {
     react_dom_1.render(react_1.createElement(PianoKeyboard_1.PianoKeyboard, null), container);
 });
 
-},{"../components/PianoKeyboard/PianoKeyboard":6,"react":18,"react-dom":15}],9:[function(require,module,exports){
+},{"../components/PianoKeyboard/PianoKeyboard":2,"react":18,"react-dom":15}],5:[function(require,module,exports){
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(require("./rect"));
+
+},{"./rect":6}],6:[function(require,module,exports){
+"use strict";
+exports.__esModule = true;
+function pointInRect(point, rect) {
+    return (point.x >= rect.left &&
+        point.x <= rect.right &&
+        point.y >= rect.top &&
+        point.y <= rect.bottom);
+}
+exports.pointInRect = pointInRect;
+
+},{}],7:[function(require,module,exports){
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(require("./graphics"));
+__export(require("./musical-data"));
+
+},{"./graphics":5,"./musical-data":8}],8:[function(require,module,exports){
+"use strict";
+exports.__esModule = true;
+function pitchClass(note) {
+    return note % 12;
+}
+exports.pitchClass = pitchClass;
+
+},{}],9:[function(require,module,exports){
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
@@ -29745,4 +29747,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[8]);
+},{}]},{},[4]);
