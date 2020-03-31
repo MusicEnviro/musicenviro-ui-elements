@@ -1,11 +1,12 @@
+import { MidiPitch } from "@musicenviro/base";
 
 export interface IFingeredNote {
-    semitonesFromBase: number;
+    pitch: MidiPitch;
     isTonic: boolean;
 }
 
 export interface IGuitarChordDiagramProps {
-    position: number | null;
+    baseNote: number | null;
     numFrets: number;
     fingeredNotes: IFingeredNote[];
     color: string;

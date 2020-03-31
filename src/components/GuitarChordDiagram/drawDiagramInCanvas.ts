@@ -87,7 +87,7 @@ function drawFingersInCanvas(ctx: CanvasRenderingContext2D, props: IGuitarChordD
     const radius = Math.min(stringWidth, fretHeight) * 0.25
 
     return props.fingeredNotes.map(note => {
-        const fingering = getStringAndFret(note.semitonesFromBase, props.position)
+        const fingering = getStringAndFret(note.pitch, props.baseNote)
 
         if (fingering.alternates.length > 0) {
             drawFinger(fingering.string, fingering.fret, 'Diamond');
