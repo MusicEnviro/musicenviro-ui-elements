@@ -23,7 +23,7 @@ export function ButtonGrid(props: IButtonGridProps) {
 	}
 
 	return (
-		<table style={{ ...props.style }}>
+		<table className="button-grid" style={{ ...props.style }}>
 			<tbody>{_.times(props.numRows, rowHTML)}</tbody>
 		</table>
 	);
