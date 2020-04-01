@@ -13,13 +13,16 @@ export interface IRhythmPoint {
 	depth: number;
 }
 
-
 export const tree44: IRhythmTree = {
 	nodes: [...Array(4)].map(() => ({
 		units: 1,
 		subtree: { nodes: [1, 1, 1, 1] }
 	}))
 };
+
+// -----------------------------------------------------------------------------
+// main
+// -----------------------------------------------------------------------------
 
 export function getRhythmPoints(
 	tree: IRhythmTree,
@@ -72,5 +75,5 @@ function numUnits(tree: IRhythmTree): number {
 // -----------------------------------------------------------------------------
 
 // console.log(JSON.stringify(getRhythmPoints({ nodes: [1, 1, 1, 1] })));
-console.log(JSON.stringify(tree44, null, 4));
+// console.log(JSON.stringify(tree44, null, 4));
 // console.log(JSON.stringify(getRhythmPoints(tree44), null, 4));

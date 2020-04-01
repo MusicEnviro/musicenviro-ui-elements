@@ -4,15 +4,18 @@ import { propToAbs, IPropOptions } from "./convert";
 export function drawCircle(
 	ctx: CanvasRenderingContext2D,
 	center: IPoint,
-	radius: number,
+    radius: number,
+    color: string = 'black',
 	filled: boolean = false
 ) {
 
     ctx.beginPath();
     ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI)
     if (filled) {
+        ctx.strokeStyle = color
         ctx.stroke()
     } else {
+        ctx.fillStyle = color
         ctx.fill()
     }
 }
@@ -27,11 +30,12 @@ export function drawCircle(
  */
 export function drawCircleP(
     ctx: CanvasRenderingContext2D,
-    propOptions: IPropOptions,
+    propOptions: IPropOptions & {fixedRadius?: boolean},
     center: IPoint,
-    radius: number,
-    ...args: any[]
+    radius: number,    
+    color: string = 'black',
+	filled: boolean = false
 ) {
     const smallDim = Math.min(ctx.canvas.width, ctx.canvas.height)
-    drawCircle(ctx, propToAbs(ctx, center, propOptions || undefined), radius * smallDim, ...args)
+    drawCircle(ctx, propToAbs(ctx, center, propOptions || undefined), propOptions.fixedRadius ? radius : radius * smallDim, color, filled)
 }
