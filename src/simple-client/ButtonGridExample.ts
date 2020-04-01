@@ -9,7 +9,7 @@ export function ButtonGridExample() {
 			width: "300px",
 			height: "300px",
 			backgroundColor: "gray",
-			color: "white"
+			color: "white",
         },
         onButtonDown: (row, col) => {
             console.log(`clicked button at row ${row}, column ${col}`)},
