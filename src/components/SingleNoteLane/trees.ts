@@ -8,7 +8,7 @@ export interface IRhythmTree {
 	>;
 }
 
-export interface IRhythmPoint {
+export interface ITreePoint {
 	position: number;
 	depth: number;
 }
@@ -29,10 +29,10 @@ export function getRhythmPoints(
 	depth: number = 0,
 	start: number = 0,
 	totalDuration: number = 1
-): IRhythmPoint[] {
+): ITreePoint[] {
 	let position = start;
 	const unitSize = totalDuration / numUnits(tree);
-	const result: IRhythmPoint[] = [];
+	const result: ITreePoint[] = [];
 
 	tree.nodes.forEach((node, i) => {
 		if (typeof node === "number") {
