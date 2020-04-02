@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IPianoKeyboardProps, IKey, IPianoKeyboardState } from "./@types";
 import { drawKeyboardInCanvas } from "./drawKeyboardInCanvas";
-import { LazyCanvasRedrawer } from "../LazyCanvasRedrawer";
+import { LazyCanvasRedrawer, lazyCanvasRedrawerDefaultProps } from "../LazyCanvasRedrawer";
 import { IPoint, pointInRect } from "@musicenviro/base";
 import { clickedPointInCanvas } from "../../utils/clickedPointInCanvas";
 
@@ -11,14 +11,14 @@ const defaultProps: IPianoKeyboardProps = {
 	keyRange: {
 		min: 36,
 		max: 72
-	}
+	},
+	...lazyCanvasRedrawerDefaultProps,
 };
 
 export { IPianoKeyboardProps };
 
 export class PianoKeyboard extends LazyCanvasRedrawer<
-	IPianoKeyboardProps,
-	IPianoKeyboardState
+	IPianoKeyboardProps, IPianoKeyboardState
 > {
 	constructor(props: IPianoKeyboardProps) {
 		super(props);
