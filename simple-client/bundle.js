@@ -123,6 +123,7 @@ var LazyCanvasRedrawer_1 = require("../LazyCanvasRedrawer");
 var drawLine_1 = require("../../graphics/canvas-drawing/drawLine");
 var trees_1 = require("./trees");
 var React = require("react");
+var dragDebounceInterval = 50;
 var radii = [7, 5, 2.5];
 var tickSizes = [0.2, 0.15, 0.075];
 var SingleNoteLane = (function (_super) {
@@ -131,6 +132,7 @@ var SingleNoteLane = (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.tree = trees_1.tree44;
         _this.mouseBoxes = [];
+        _this.lastDragStamp = 0;
         return _this;
     }
     SingleNoteLane.prototype.addMouseBox = function () {
@@ -151,6 +153,7 @@ var SingleNoteLane = (function (_super) {
         this.img = document.createElement("img");
         this.img.setAttribute("style", "width:" + 1 + "px;height:" + 1 + "px;border:none;display:block");
         this.img.src = "resources/tiny-image.png";
+        this.img.setAttribute('opacity', '0');
     };
     SingleNoteLane.prototype.handleMouseBoxClick = function (ref) {
         ref.current.style.backgroundColor = "black";
@@ -160,16 +163,23 @@ var SingleNoteLane = (function (_super) {
         event.dataTransfer.setDragImage(this.img, 0, 0);
     };
     SingleNoteLane.prototype.handleMouseBoxDragEnd = function (ref) {
+        ref.current.setAttribute('draggable', 'false');
         console.log("stopped dragging " + ref.current.id);
     };
     SingleNoteLane.prototype.handleMouseBoxDrag = function (ref, event) {
-        var target = event.target;
-        if (event.clientX === 0 && event.clientY === 0)
-            return;
-        var movement = {
-            x: event.clientX - target.getBoundingClientRect().left,
-            y: event.clientY - target.getBoundingClientRect().top
-        };
+        if (Date.now() - this.lastDragStamp > dragDebounceInterval) {
+            var target = event.target;
+            if (event.clientX === 0 && event.clientY === 0)
+                return;
+            var movement = {
+                x: Math.floor(event.clientX - target.getBoundingClientRect().left),
+                y: Math.floor(event.clientY - target.getBoundingClientRect().top)
+            };
+            console.log(target.id, movement);
+            this.lastDragStamp = Date.now();
+        }
+        else {
+        }
     };
     SingleNoteLane.prototype.render = function () {
         var _this = this;

@@ -10,10 +10,13 @@ import { drawLineP } from "../../graphics/canvas-drawing/drawLine";
 import { drawCircleP } from "../../graphics/canvas-drawing/drawCircle";
 import { IRhythmTree, getRhythmPoints, tree44 } from "./trees";
 import * as React from "react";
+import { debounce } from "debounce";
 
 // =============================================================================
 // config
 // =============================================================================
+
+const dragDebounceInterval = 50; // for dragging
 
 const radii = [7, 5, 2.5];
 const tickSizes = [0.2, 0.15, 0.075];
@@ -24,8 +27,9 @@ const tickSizes = [0.2, 0.15, 0.075];
 
 export class SingleNoteLane extends LazyCanvasRedrawer {
 	tree: IRhythmTree = tree44;
-
+	
 	mouseBoxes: React.RefObject<HTMLDivElement>[] = [];
+	lastDragStamp: number = 0
 
 	static defaultProps = {
 		style: {
@@ -83,8 +87,12 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		);
 		this.img.src = "resources/tiny-image.png"
 			// "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-
+		this.img.setAttribute('opacity', '0')
 	}
+
+	// ----------------------------------------------------------------------------
+	// mouse handlers
+	// ----------------------------------------------------------------------------
 
 	handleMouseBoxClick(ref: React.RefObject<HTMLDivElement>) {
 		ref.current.style.backgroundColor = "black";
@@ -95,12 +103,11 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		event: React.DragEvent<HTMLDivElement>
 	) {
 		console.log("started dragging " + ref.current.id);
-
-		
 		event.dataTransfer.setDragImage(this.img, 0, 0);
 	}
 
 	handleMouseBoxDragEnd(ref: React.RefObject<HTMLDivElement>) {
+		ref.current.setAttribute('draggable', 'false')
 		console.log("stopped dragging " + ref.current.id);
 	}
 
@@ -108,16 +115,22 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		ref: React.RefObject<HTMLDivElement>,
 		event: React.DragEvent<HTMLDivElement>
 	) {
-		// console.log('drag')
-		const target = event.target as HTMLDivElement;
-		if (event.clientX === 0 && event.clientY === 0) return;
+		
+		if (Date.now() - this.lastDragStamp > dragDebounceInterval) {
+			const target = event.target as HTMLDivElement;
+			if (event.clientX === 0 && event.clientY === 0) return;
+			
+			const movement = {
+				x:  Math.floor(event.clientX - target.getBoundingClientRect().left),
+				y: Math.floor(event.clientY - target.getBoundingClientRect().top)
+			};
 
-		const movement = {
-			x: event.clientX - target.getBoundingClientRect().left,
-			y: event.clientY - target.getBoundingClientRect().top
-		};
+			console.log(target.id, movement)
 
-		// console.log(movement, event.clientX)
+			this.lastDragStamp = Date.now()
+		} else {
+			// could have a timer here
+		}
 	}
 
 	render() {
@@ -138,7 +151,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 						}}
 						onClick={() => this.handleMouseBoxClick(ref)}
 						draggable={true}
-						onDrag={event => this.handleMouseBoxDrag(ref, event)}
+						onDrag={(event: React.DragEvent<HTMLDivElement>) => this.handleMouseBoxDrag(ref, event)}
 						onDragStart={event =>
 							this.handleMouseBoxDragStart(ref, event)
 						}
