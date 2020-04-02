@@ -10,7 +10,7 @@ import { drawLineP } from "../../graphics/canvas-drawing/drawLine";
 import { drawCircleP } from "../../graphics/canvas-drawing/drawCircle";
 import { IRhythmTree, getRhythmPoints, tree44 } from "./trees";
 import * as React from "react";
-import { debounce } from "debounce";
+import { IPoint, subtractPoints } from "@musicenviro/base";
 
 // =============================================================================
 // config
@@ -55,21 +55,21 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		);
 
 		getRhythmPoints(this.tree).forEach(point => {
-			drawLineP(
-				ctx,
-				{ absolutePadding: 10 },
-				{ x: point.position, y: 0.5 + tickSizes[point.depth] * 0.5 },
-				{ x: point.position, y: 0.5 - tickSizes[point.depth] * 0.5 },
-				this.props.style.color
-			);
-
-			// drawCircleP(
+			// drawLineP(
 			// 	ctx,
-			// 	{ absolutePadding: 10, fixedRadius: true },
-			// 	{ x: point.position, y: 0.5 },
-			// 	radii[point.depth],
+			// 	{ absolutePadding: 10 },
+			// 	{ x: point.position, y: 0.5 + tickSizes[point.depth] * 0.5 },
+			// 	{ x: point.position, y: 0.5 - tickSizes[point.depth] * 0.5 },
 			// 	this.props.style.color
 			// );
+
+			drawCircleP(
+				ctx,
+				{ absolutePadding: 10, fixedRadius: true },
+				{ x: point.position, y: 0.5 },
+				radii[point.depth],
+				this.props.style.color
+			);
 		});
 	}
 
@@ -85,80 +85,54 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 			"style",
 			"width:" + 1 + "px;height:" + 1 + "px;border:none;display:block"
 		);
-		this.img.src = "resources/tiny-image.png"
-			// "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
-		this.img.setAttribute('opacity', '0')
+		this.img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+		// this.img.setAttribute('opacity', '0')
+
+		this.ref.current.draggable = true
+		this.ref.current.ondragstart = event => this.handleMouseBoxDragStart(event)
+		this.ref.current.ondrag = event => this.handleMouseBoxDrag(event)
 	}
 
 	// ----------------------------------------------------------------------------
 	// mouse handlers
 	// ----------------------------------------------------------------------------
 
+	dragStart: IPoint;
+
 	handleMouseBoxClick(ref: React.RefObject<HTMLDivElement>) {
 		ref.current.style.backgroundColor = "black";
 	}
 
 	handleMouseBoxDragStart(
-		ref: React.RefObject<HTMLDivElement>,
-		event: React.DragEvent<HTMLDivElement>
+		event: DragEvent
 	) {
-		console.log("started dragging " + ref.current.id);
-		event.dataTransfer.setDragImage(this.img, 0, 0);
+		console.log("started dragging at", event.clientX, event.clientY);
+		this.dragStart = {x: event.clientX, y: event.clientY}
+		
+		// hide the ghost image
+		event.dataTransfer.setDragImage(this.img, 1000, 1000);
 	}
 
-	handleMouseBoxDragEnd(ref: React.RefObject<HTMLDivElement>) {
-		ref.current.setAttribute('draggable', 'false')
-		console.log("stopped dragging " + ref.current.id);
+	handleMouseBoxDragEnd(ref: React.RefObject<HTMLCanvasElement>) {
+		console.log("stopped dragging");
 	}
 
 	handleMouseBoxDrag(
-		ref: React.RefObject<HTMLDivElement>,
-		event: React.DragEvent<HTMLDivElement>
+		event: DragEvent
 	) {
 		
 		if (Date.now() - this.lastDragStamp > dragDebounceInterval) {
-			const target = event.target as HTMLDivElement;
-			if (event.clientX === 0 && event.clientY === 0) return;
+			// if (event.clientX === 0 && event.clientY === 0) return;
 			
-			const movement = {
-				x:  Math.floor(event.clientX - target.getBoundingClientRect().left),
-				y: Math.floor(event.clientY - target.getBoundingClientRect().top)
-			};
 
-			console.log(target.id, movement)
+			
+			const movement = subtractPoints({x: event.clientX, y: event.clientY}, this.dragStart)
+
+			console.log(movement)
 
 			this.lastDragStamp = Date.now()
 		} else {
 			// could have a timer here
 		}
-	}
-
-	render() {
-		return (
-			<div>
-				{this.mouseBoxes.map((ref, i) => (
-					<div
-						ref={ref}
-						key={i}
-						id={"box" + i}
-						style={{
-							height: 50,
-							width: 50,
-							border: "solid 1px",
-							position: "absolute",
-							top: Math.floor(Math.random() * 100),
-							left: Math.floor(Math.random() * 100)
-						}}
-						onClick={() => this.handleMouseBoxClick(ref)}
-						draggable={true}
-						onDrag={(event: React.DragEvent<HTMLDivElement>) => this.handleMouseBoxDrag(ref, event)}
-						onDragStart={event =>
-							this.handleMouseBoxDragStart(ref, event)
-						}
-					></div>
-				))}
-				{super.render()}
-			</div>
-		);
 	}
 }

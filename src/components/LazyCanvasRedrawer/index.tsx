@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as debounce from "debounce";
 
 import { ILazyCanvasRedrawerProps } from "./types";
 
@@ -72,7 +71,7 @@ export class LazyCanvasRedrawer<
 	}
 
 	handleResize() {
-		debounce(() => this.redraw(), 1000)();
+		this.redraw();
 	}
 
 	componentDidMount() {
