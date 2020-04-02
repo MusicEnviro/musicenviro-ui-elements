@@ -3,7 +3,7 @@ import * as debounce from "debounce";
 
 import { ILazyCanvasRedrawerProps } from "./types";
 
-export const lazyCanvasRedrawerDefaultProps = {
+export const lazyCanvasRedrawerDefaultProps: ILazyCanvasRedrawerProps = {
 	width: 100,
 	height: 100,
 	style: {
@@ -14,8 +14,9 @@ export const lazyCanvasRedrawerDefaultProps = {
 };
 
 export class LazyCanvasRedrawer<
-	T extends ILazyCanvasRedrawerProps = ILazyCanvasRedrawerProps // that's annoying, have to type it twice?
-> extends React.Component<T> {
+	T extends ILazyCanvasRedrawerProps = ILazyCanvasRedrawerProps, // that's annoying, have to type it twice?
+	S = {}
+> extends React.Component<T, S> {
 	className: string = "specify-this-in-subclass-please";
 
 	drawStamp: number = 0;

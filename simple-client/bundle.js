@@ -111,10 +111,18 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 exports.__esModule = true;
 var LazyCanvasRedrawer_1 = require("../LazyCanvasRedrawer");
 var drawLine_1 = require("../../graphics/canvas-drawing/drawLine");
 var trees_1 = require("./trees");
+var React = require("react");
 var radii = [7, 5, 2.5];
 var tickSizes = [0.2, 0.15, 0.075];
 var SingleNoteLane = (function (_super) {
@@ -122,14 +130,61 @@ var SingleNoteLane = (function (_super) {
     function SingleNoteLane() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.tree = trees_1.tree44;
+        _this.mouseBoxes = [];
         return _this;
     }
+    SingleNoteLane.prototype.addMouseBox = function () {
+        this.mouseBoxes.push(React.createRef());
+    };
     SingleNoteLane.prototype.draw = function (ctx) {
         var _this = this;
         drawLine_1.drawLineP(ctx, { absolutePadding: 10 }, { x: 0, y: 0.5 }, { x: 1, y: 0.5 }, this.props.style.color);
         trees_1.getRhythmPoints(this.tree).forEach(function (point) {
             drawLine_1.drawLineP(ctx, { absolutePadding: 10 }, { x: point.position, y: 0.5 + tickSizes[point.depth] * 0.5 }, { x: point.position, y: 0.5 - tickSizes[point.depth] * 0.5 }, _this.props.style.color);
         });
+    };
+    SingleNoteLane.prototype.componentDidMount = function () {
+        var _this = this;
+        _super.prototype.componentDidMount.call(this);
+        __spreadArrays(Array(5)).forEach(function () { return _this.addMouseBox(); });
+        this.forceUpdate();
+        this.img = document.createElement("img");
+        this.img.setAttribute("style", "width:" + 1 + "px;height:" + 1 + "px;border:none;display:block");
+        this.img.src = "resources/tiny-image.png";
+    };
+    SingleNoteLane.prototype.handleMouseBoxClick = function (ref) {
+        ref.current.style.backgroundColor = "black";
+    };
+    SingleNoteLane.prototype.handleMouseBoxDragStart = function (ref, event) {
+        console.log("started dragging " + ref.current.id);
+        event.dataTransfer.setDragImage(this.img, 0, 0);
+    };
+    SingleNoteLane.prototype.handleMouseBoxDragEnd = function (ref) {
+        console.log("stopped dragging " + ref.current.id);
+    };
+    SingleNoteLane.prototype.handleMouseBoxDrag = function (ref, event) {
+        var target = event.target;
+        if (event.clientX === 0 && event.clientY === 0)
+            return;
+        var movement = {
+            x: event.clientX - target.getBoundingClientRect().left,
+            y: event.clientY - target.getBoundingClientRect().top
+        };
+    };
+    SingleNoteLane.prototype.render = function () {
+        var _this = this;
+        return (React.createElement("div", null,
+            this.mouseBoxes.map(function (ref, i) { return (React.createElement("div", { ref: ref, key: i, id: "box" + i, style: {
+                    height: 50,
+                    width: 50,
+                    border: "solid 1px",
+                    position: "absolute",
+                    top: Math.floor(Math.random() * 100),
+                    left: Math.floor(Math.random() * 100)
+                }, onClick: function () { return _this.handleMouseBoxClick(ref); }, draggable: true, onDrag: function (event) { return _this.handleMouseBoxDrag(ref, event); }, onDragStart: function (event) {
+                    return _this.handleMouseBoxDragStart(ref, event);
+                } })); }),
+            _super.prototype.render.call(this)));
     };
     SingleNoteLane.defaultProps = {
         style: __assign(__assign({}, LazyCanvasRedrawer_1.lazyCanvasRedrawerDefaultProps.style), { border: "solid black 1px", color: "gray" }),
@@ -140,7 +195,7 @@ var SingleNoteLane = (function (_super) {
 }(LazyCanvasRedrawer_1.LazyCanvasRedrawer));
 exports.SingleNoteLane = SingleNoteLane;
 
-},{"../../graphics/canvas-drawing/drawLine":5,"../LazyCanvasRedrawer":1,"./trees":3}],3:[function(require,module,exports){
+},{"../../graphics/canvas-drawing/drawLine":5,"../LazyCanvasRedrawer":1,"./trees":3,"react":16}],3:[function(require,module,exports){
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
