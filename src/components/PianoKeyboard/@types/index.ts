@@ -1,6 +1,6 @@
 
 import { MidiPitch, IRect, IRange } from '@musicenviro/base'
-import { ILazyCanvasRedrawerProps } from '../../LazyCanvasRedrawer/types';
+import { ILazyCanvasRedrawerProps } from '../../../generic-components/LazyCanvasRedrawer/types';
 
 export interface IKey {
 	type: "White" | "Black";

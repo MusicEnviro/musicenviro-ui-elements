@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IGuitarChordDiagramProps, IFingeredNote } from "./@types";
 import { drawDiagramInCanvas } from "./drawDiagramInCanvas";
-import { LazyCanvasRedrawer, lazyCanvasRedrawerDefaultProps } from "../LazyCanvasRedrawer";
+import { LazyCanvasRedrawer, lazyCanvasRedrawerDefaultProps } from "../../generic-components/LazyCanvasRedrawer/LazyCanvasRedrawer";
 import { pitchClass } from "@musicenviro/base";
 
 export { IGuitarChordDiagramProps, IFingeredNote };

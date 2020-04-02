@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IPianoKeyboardProps, IKey, IPianoKeyboardState } from "./@types";
 import { drawKeyboardInCanvas } from "./drawKeyboardInCanvas";
-import { LazyCanvasRedrawer, lazyCanvasRedrawerDefaultProps } from "../LazyCanvasRedrawer";
+import { LazyCanvasRedrawer, lazyCanvasRedrawerDefaultProps } from "../../generic-components/LazyCanvasRedrawer/LazyCanvasRedrawer";
 import { IPoint, pointInRect } from "@musicenviro/base";
 import { mousePointInElement } from "../../utils/clickedPointInCanvas";
 

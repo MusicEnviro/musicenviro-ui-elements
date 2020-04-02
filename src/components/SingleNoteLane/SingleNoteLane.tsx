@@ -5,7 +5,7 @@
 import {
 	LazyCanvasRedrawer,
 	lazyCanvasRedrawerDefaultProps
-} from "../LazyCanvasRedrawer";
+} from "../../generic-components/LazyCanvasRedrawer/LazyCanvasRedrawer";
 import { drawLineP } from "../../graphics/canvas-drawing/drawLine";
 import { drawCircleP } from "../../graphics/canvas-drawing/drawCircle";
 import { IRhythmTree, getRhythmPoints, tree44 } from "./trees";
@@ -28,8 +28,8 @@ const tickSizes = [0.2, 0.15, 0.075];
 
 export class SingleNoteLane extends LazyCanvasRedrawer {
 	tree: IRhythmTree = tree44;
-	
-	mouseManager = new CanvasMouseManager()
+
+	mouseManager = new CanvasMouseManager();
 
 	static defaultProps = {
 		style: {
@@ -44,50 +44,48 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 	draw(ctx: CanvasRenderingContext2D) {
 		drawLineP(
 			ctx,
-			{ absolutePadding: 10 },
+			{ padding: 10 },
 			{ x: 0, y: 0.5 },
 			{ x: 1, y: 0.5 },
 			this.props.style.color
 		);
 
 		getRhythmPoints(this.tree).forEach(point => {
-			drawLineP(
-				ctx,
-				{ absolutePadding: 10 },
-				{ x: point.position, y: 0.5 + tickSizes[point.depth] * 0.5 },
-				{ x: point.position, y: 0.5 - tickSizes[point.depth] * 0.5 },
-				this.props.style.color
-			);
-
-			// drawCircleP(
+			// drawLineP(
 			// 	ctx,
-			// 	{ absolutePadding: 10, fixedRadius: true },
-			// 	{ x: point.position, y: 0.5 },
-			// 	radii[point.depth],
+			// 	{ padding: 10 },
+			// 	{ x: point.position, y: 0.5 + tickSizes[point.depth] * 0.5 },
+			// 	{ x: point.position, y: 0.5 - tickSizes[point.depth] * 0.5 },
 			// 	this.props.style.color
 			// );
+
+			drawCircleP(
+				ctx,
+				{ padding: 10, fixedRadius: true },
+				{ x: point.position, y: 0.5 },
+				radii[point.depth],
+				this.props.style.color
+			);
 		});
 	}
 
-	img: HTMLImageElement
+	img: HTMLImageElement;
 
 	componentDidMount() {
 		super.componentDidMount();
-		this.mouseManager.initialize(this.ref.current)
+		this.mouseManager.initialize(this.ref.current);
 
-		const area = this.mouseManager.createArea(10, 10, 50, 50)
-		
+		const area = this.mouseManager.createArea(10, 10, 50, 50);
+
 		area.onMouseDown(point => {
-			console.log(point)
-		})
+			console.log(point);
+		});
 
-		area.onMouseEnter(() => console.log('enter'))
-		area.onMouseLeave(() => console.log('leave'))
+		area.onMouseEnter(() => console.log("enter"));
+		area.onMouseLeave(() => console.log("leave"));
 	}
 
 	// ----------------------------------------------------------------------------
 	// mouse handlers
 	// ----------------------------------------------------------------------------
-
-	
 }

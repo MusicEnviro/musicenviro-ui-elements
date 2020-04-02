@@ -1,6 +1,6 @@
 import { MidiPitch } from "@musicenviro/base";
 import { CSSProperties } from "react";
-import { ILazyCanvasRedrawerProps } from "../../LazyCanvasRedrawer/types";
+import { ILazyCanvasRedrawerProps } from "../../../generic-components/LazyCanvasRedrawer/types";
 
 export interface IFingeredNote {
     pitch: MidiPitch;
