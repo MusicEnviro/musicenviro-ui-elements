@@ -3,7 +3,7 @@ import { IPianoKeyboardProps, IKey, IPianoKeyboardState } from "./@types";
 import { drawKeyboardInCanvas } from "./drawKeyboardInCanvas";
 import { LazyCanvasRedrawer, lazyCanvasRedrawerDefaultProps } from "../LazyCanvasRedrawer";
 import { IPoint, pointInRect } from "@musicenviro/base";
-import { clickedPointInCanvas } from "../../utils/clickedPointInCanvas";
+import { mousePointInElement } from "../../utils/clickedPointInCanvas";
 
 const defaultProps: IPianoKeyboardProps = {
 	onNoteDown: () => {},
@@ -39,7 +39,7 @@ export class PianoKeyboard extends LazyCanvasRedrawer<
 
 	handleClick(e: MouseEvent) {
 		const key = this.getKeyUnderPoint(
-			clickedPointInCanvas(this.ref.current, e)
+			mousePointInElement(this.ref.current, e)
 		);
 
 		if (key) {

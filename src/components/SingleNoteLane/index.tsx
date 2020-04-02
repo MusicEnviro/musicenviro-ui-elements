@@ -74,6 +74,15 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 	componentDidMount() {
 		super.componentDidMount();
 		this.mouseManager.initialize(this.ref.current)
+
+		const area = this.mouseManager.createArea(10, 10, 50, 50)
+		
+		area.onMouseDown(point => {
+			console.log(point)
+		})
+
+		area.onMouseEnter(() => console.log('enter'))
+		area.onMouseLeave(() => console.log('leave'))
 	}
 
 	// ----------------------------------------------------------------------------

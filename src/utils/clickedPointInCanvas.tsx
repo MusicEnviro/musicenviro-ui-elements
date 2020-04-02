@@ -1,7 +1,7 @@
 import { IPoint } from "@musicenviro/base";
 
-export function clickedPointInCanvas(canvas: HTMLCanvasElement, e: MouseEvent): IPoint {
+export function mousePointInElement(canvas: HTMLElement, e: MouseEvent): IPoint {
 	const rect = canvas.getBoundingClientRect();
-	const clickedPoint = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+	const clickedPoint = { x: Math.floor(e.clientX - rect.left), y: Math.floor(e.clientY - rect.top) };
 	return clickedPoint;
 }
