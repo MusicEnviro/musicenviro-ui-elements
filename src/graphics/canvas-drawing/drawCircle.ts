@@ -8,17 +8,21 @@ export function drawCircle(
 	color: string = 'black',
 	filled: boolean = false,
 	dash: number[] = [],
+	alpha: number = 1,
 ) {
+	ctx.save();
+	ctx.globalAlpha = alpha;
 	ctx.beginPath();
 	ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 	if (filled) {
-        ctx.fillStyle = color;
+		ctx.fillStyle = color;
 		ctx.fill();
-    } else {
+	} else {
 		ctx.setLineDash(dash);
 		ctx.strokeStyle = color;
 		ctx.stroke();
 	}
+	ctx.restore();
 }
 
 /**
@@ -36,6 +40,7 @@ export function drawCircleP(
 	radius: number,
 	color: string = 'black',
 	filled: boolean = false,
+	alpha: number = 1
 ) {
 	const smallDim = Math.min(ctx.canvas.width, ctx.canvas.height);
 	drawCircle(
@@ -44,5 +49,7 @@ export function drawCircleP(
 		propOptions.fixedRadius ? radius : radius * smallDim,
 		color,
 		filled,
+		[],
+		alpha,
 	);
 }

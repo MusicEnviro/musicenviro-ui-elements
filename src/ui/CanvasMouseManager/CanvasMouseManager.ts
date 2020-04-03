@@ -4,14 +4,18 @@ import { mousePointInElement } from "../../utils/clickedPointInCanvas";
 
 const dragDebounceInterval = 100;
 
+let counter = 0;
+
 export class MouseArea {
 	rect: IRect;
+	id: number;
 	
 	// hide the actual emitter, type-safe methods below.
 	private emitter = new EventEmitter()
 	
 	constructor(rect: IRect) {
 		this.rect = rect;
+		this.id = counter++
 	}
 
 	emitMouseDown(p: IPoint) {
@@ -27,7 +31,7 @@ export class MouseArea {
 	onMouseEnter(callback: () => void): void {
 		this.emitter.on("mouseenter", callback);
 	}
-
+	
 	emitMouseLeave() {
 		this.emitter.emit("mouseleave")
 	}
