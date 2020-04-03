@@ -14,7 +14,7 @@ import { IPoint, subtractPoints, rectCenter } from '@musicenviro/base';
 import { CanvasMouseManager, MouseArea } from '../../ui/CanvasMouseManager/CanvasMouseManager';
 import { ILazyCanvasRedrawerProps } from '../../generic-components/LazyCanvasRedrawer/types';
 import { propToAbs, absToProp } from '../../graphics/canvas-drawing/convert';
-import { keysPressed } from '../../ui/key-monitor';
+import { keysPressed, onTransition } from '../../ui/key-monitor';
 
 // =============================================================================
 // config
@@ -71,7 +71,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 				hoverAreaRadius - 2,
 				this.props.style.color,
 				true,
-				0.5
+				0.5,
 			);
 		});
 
@@ -101,6 +101,21 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		super.componentDidMount();
 		this.mouseManager.initialize(this.ref.current);
 		this.addAreas();
+		this.setupKeyEvents();
+	}
+
+	private setupKeyEvents() {
+		onTransition((key, newState) => {
+			switch (key) {
+				case 'Shift':
+					if (newState === 'Down') {
+						this.setHighlightsForShiftKey();
+					}
+					else {
+						this.setHighlightsForNoShift();
+					}
+			}
+		});
 	}
 
 	addAreas() {
@@ -116,40 +131,58 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 				center.y - hoverAreaRadius,
 				center.x + hoverAreaRadius,
 				center.y + hoverAreaRadius,
-				i
+				i,
 			);
 
 			area.onMouseEnter(() => {
 				if (keysPressed.Shift) {
-					const division = (pos * 16) % 4;
-					[0,1,2,3].forEach(beat => {
-						this.addHighlight(this.mouseManager.areas[beat * 4 + division])
-					})
+					this.setHighlightsForShiftKey()
 				} else {
-					this.addHighlight(area)
+					this.addHighlight(area);
 				}
 			});
 			area.onMouseLeave(() => this.removeAllHighlights());
-			area.onMouseDown(() => this.toggleNote(pos))
+			area.onMouseDown(() => this.toggleNote(pos));
 		});
 	}
+
+	setHighlightsForShiftKey() {
+		// hover is a set, so we have to get one value using an iterator
+		const pos = this.mouseManager.getTopHover().pos;
+		
+		this.highlights.clear();
+		
+		const division = (pos * 16) % 4;
+		[0, 1, 2, 3].forEach(beat => {
+			this.highlights.add(this.mouseManager.areas[beat * 4 + division]);
+		});
+
+		console.log('set the highlights')
+
+		this.redraw()
+	}
+	
+	setHighlightsForNoShift() {
+		this.highlights.clear();
+		this.addHighlight(this.mouseManager.getTopHover())
+	}
+
 
 	notes: number[] = [];
 
 	toggleNote(pos: number) {
-		const index = this.notes.indexOf(pos)
+		const index = this.notes.indexOf(pos);
 		if (index === -1) {
-			this.highlights.forEach(area => this.notes.push(area.id * 0.0625))
+			this.highlights.forEach(area => this.notes.push(area.id * 0.0625));
 		} else {
-			this.notes.splice(index, 1)
+			this.notes.splice(index, 1);
 		}
-		this.redraw()
+		this.redraw();
 	}
 
 	highlights = new Set<MouseArea>();
 
 	addHighlight(area: MouseArea) {
-		console.log(keysPressed.Shift)
 		this.highlights.add(area);
 		this.redraw(true);
 	}
@@ -160,7 +193,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 	}
 
 	removeAllHighlights() {
-		this.highlights.clear()
-		this.redraw(true)
+		this.highlights.clear();
+		this.redraw(true);
 	}
 }

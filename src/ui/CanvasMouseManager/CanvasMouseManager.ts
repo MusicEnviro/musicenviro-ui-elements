@@ -63,6 +63,8 @@ export class CanvasMouseManager extends EventEmitter {
 		canvas.ondragstart = event => this.handleDragStart(event);
 		canvas.ondrag = event => this.handleDrag(event);
 
+		canvas.onmouseleave = event => this.handleMouseLeave(event);
+
 		// --------------------------------------------------------------------------
 		// for hiding the ghost image rendered by browsers on drag
 		// --------------------------------------------------------------------------
@@ -76,6 +78,10 @@ export class CanvasMouseManager extends EventEmitter {
 			"data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 
 		// this.dragImage.setAttribute('opacity', '0') // not sure if this is necessary
+	}
+
+	getTopHover() {
+		return this.hover.values().next().value
 	}
 
 	createArea(
@@ -126,6 +132,11 @@ export class CanvasMouseManager extends EventEmitter {
 		this.hover = hovering
 
 		this.emit("mousemove", event)
+	}
+
+	handleMouseLeave(event: MouseEvent) {
+		this.hover.forEach(area => area.emitMouseLeave())
+		this.hover.clear()
 	}
 
 	handleDragStart(event: DragEvent) {
