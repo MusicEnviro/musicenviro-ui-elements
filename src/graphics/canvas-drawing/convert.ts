@@ -24,9 +24,10 @@ export function propToAbs(ctx: CanvasRenderingContext2D, point: IPoint, options:
  * 
  * @returns point with coordinates that are relative to canvas, so 0-1 is the width or height 
  */
-export function absToProp(ctx: CanvasRenderingContext2D, point: IPoint): IPoint {
+export function absToProp(ctx: CanvasRenderingContext2D, point: IPoint, options: IPropOptions = {}): IPoint {
+    const padding = options.padding || 0
     return {
-        x: point.x / ctx.canvas.width,
-        y: point.y / ctx.canvas.height
+        x: point.x / (ctx.canvas.width - padding * 2) - padding,
+        y: point.y / (ctx.canvas.height - padding * 2) - padding
     }
 }

@@ -13,7 +13,8 @@ import * as React from 'react';
 import { IPoint, subtractPoints, rectCenter } from '@musicenviro/base';
 import { CanvasMouseManager, MouseArea } from '../../ui/CanvasMouseManager/CanvasMouseManager';
 import { ILazyCanvasRedrawerProps } from '../../generic-components/LazyCanvasRedrawer/types';
-import { propToAbs } from '../../graphics/canvas-drawing/convert';
+import { propToAbs, absToProp } from '../../graphics/canvas-drawing/convert';
+import { keysPressed } from '../../ui/key-monitor';
 
 // =============================================================================
 // config
@@ -43,7 +44,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 	static defaultProps = {
 		style: {
 			...lazyCanvasRedrawerDefaultProps.style,
-			border: 'solid black 1px',
+			// border: 'solid black 1px',
 			color: 'red',
 		},
 		width: 750,
@@ -115,10 +116,20 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 				center.y - hoverAreaRadius,
 				center.x + hoverAreaRadius,
 				center.y + hoverAreaRadius,
+				i
 			);
 
-			area.onMouseEnter(() => this.addHighlight(area));
-			area.onMouseLeave(() => this.removeHighlight(area));
+			area.onMouseEnter(() => {
+				if (keysPressed.Shift) {
+					const division = (pos * 16) % 4;
+					[0,1,2,3].forEach(beat => {
+						this.addHighlight(this.mouseManager.areas[beat * 4 + division])
+					})
+				} else {
+					this.addHighlight(area)
+				}
+			});
+			area.onMouseLeave(() => this.removeAllHighlights());
 			area.onMouseDown(() => this.toggleNote(pos))
 		});
 	}
@@ -128,7 +139,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 	toggleNote(pos: number) {
 		const index = this.notes.indexOf(pos)
 		if (index === -1) {
-			this.notes.push(pos)
+			this.highlights.forEach(area => this.notes.push(area.id * 0.0625))
 		} else {
 			this.notes.splice(index, 1)
 		}
@@ -138,6 +149,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 	highlights = new Set<MouseArea>();
 
 	addHighlight(area: MouseArea) {
+		console.log(keysPressed.Shift)
 		this.highlights.add(area);
 		this.redraw(true);
 	}
@@ -145,5 +157,10 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 	removeHighlight(area: MouseArea) {
 		this.highlights.delete(area);
 		this.redraw(true);
+	}
+
+	removeAllHighlights() {
+		this.highlights.clear()
+		this.redraw(true)
 	}
 }

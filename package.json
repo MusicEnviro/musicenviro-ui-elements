@@ -13,6 +13,7 @@
 	"dependencies": {
 		"@musicenviro/base": "file:../musicenviro__base",
 		"@types/debounce": "^1.2.0",
+		"gh-pages": "^2.2.0",
 		"lodash": "^4.17.15",
 		"react": "^16.12.0",
 		"ts-node": "^8.6.2"

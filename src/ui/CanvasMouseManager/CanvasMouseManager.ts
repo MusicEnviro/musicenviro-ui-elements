@@ -13,9 +13,9 @@ export class MouseArea {
 	// hide the actual emitter, type-safe methods below.
 	private emitter = new EventEmitter()
 	
-	constructor(rect: IRect) {
+	constructor(rect: IRect, id: number) {
 		this.rect = rect;
-		this.id = counter++
+		this.id = id
 	}
 
 	emitMouseDown(p: IPoint) {
@@ -82,9 +82,10 @@ export class CanvasMouseManager extends EventEmitter {
 		left: number,
 		top: number,
 		right: number,
-		bottom: number
+		bottom: number,
+		id: number
 	): MouseArea {
-		const area = new MouseArea({ left, top, right, bottom });
+		const area = new MouseArea({ left, top, right, bottom }, id);
 		this.areas.push(area);
 		return area;
 	}
