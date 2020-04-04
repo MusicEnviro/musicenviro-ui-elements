@@ -115,6 +115,26 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 exports.__esModule = true;
 var LazyCanvasRedrawer_1 = require("../../generic-components/LazyCanvasRedrawer/LazyCanvasRedrawer");
 var drawLine_1 = require("../../graphics/canvas-drawing/drawLine");
@@ -159,6 +179,17 @@ var SingleNoteLane = (function (_super) {
         _super.prototype.componentDidMount.call(this);
         this.mouseManager.initialize(this.ref.current);
         this.addAreas();
+        this.setupKeyEvents();
+    };
+    SingleNoteLane.prototype.setupKeyEvents = function () {
+        var _this = this;
+        key_monitor_1.onTransition(function (key, newState) {
+            switch (key) {
+                case 'Shift':
+                    _this.updateHighlights();
+                    break;
+            }
+        });
     };
     SingleNoteLane.prototype.addAreas = function () {
         var _this = this;
@@ -169,20 +200,34 @@ var SingleNoteLane = (function (_super) {
                 padding: 10
             });
             var area = _this.mouseManager.createArea(center.x - hoverAreaRadius, center.y - hoverAreaRadius, center.x + hoverAreaRadius, center.y + hoverAreaRadius, i);
-            area.onMouseEnter(function () {
-                if (key_monitor_1.keysPressed.Shift) {
-                    var division_1 = (pos * 16) % 4;
-                    [0, 1, 2, 3].forEach(function (beat) {
-                        _this.addHighlight(_this.mouseManager.areas[beat * 4 + division_1]);
-                    });
-                }
-                else {
-                    _this.addHighlight(area);
-                }
-            });
-            area.onMouseLeave(function () { return _this.removeAllHighlights(); });
+            area.onMouseEnter(function () { return _this.updateHighlights(); });
+            area.onMouseLeave(function () { return _this.updateHighlights(); });
             area.onMouseDown(function () { return _this.toggleNote(pos); });
+            treePoint.area = area;
         });
+    };
+    SingleNoteLane.prototype.getHoverPoint = function () {
+        var hover = this.mouseManager.getTopHover();
+        return this.gridTreePoints.find(function (point) { return point.area === hover; });
+    };
+    SingleNoteLane.prototype.updateHighlights = function () {
+        var _this = this;
+        this.highlights.clear();
+        var hoverPoint = this.getHoverPoint();
+        if (hoverPoint) {
+            if (key_monitor_1.keysPressed.Shift) {
+                this.multiplyPoint(hoverPoint).forEach(function (point) { return _this.addHighlight(point.area); });
+            }
+            else {
+                this.highlights.add(hoverPoint.area);
+            }
+        }
+        this.redraw(true);
+    };
+    SingleNoteLane.prototype.multiplyPoint = function (point) {
+        var _this = this;
+        var division = (point.position * 16) % 4;
+        return [0, 1, 2, 3].map(function (beat) { return _this.gridTreePoints[beat * 4 + division]; });
     };
     SingleNoteLane.prototype.toggleNote = function (pos) {
         var _this = this;
@@ -191,12 +236,11 @@ var SingleNoteLane = (function (_super) {
             this.highlights.forEach(function (area) { return _this.notes.push(area.id * 0.0625); });
         }
         else {
-            this.notes.splice(index, 1);
+            this.notes = this.notes.filter(function (pos) { return !__spread(_this.highlights).map(function (area) { return area.id * 0.0625; }).includes(pos); });
         }
         this.redraw();
     };
     SingleNoteLane.prototype.addHighlight = function (area) {
-        console.log(key_monitor_1.keysPressed.Shift);
         this.highlights.add(area);
         this.redraw(true);
     };
@@ -230,18 +274,31 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
 };
 exports.__esModule = true;
 exports.tree44 = {
-    nodes: __spreadArrays(Array(4)).map(function () { return ({
+    nodes: __spread(Array(4)).map(function () { return ({
         units: 1,
-        subtree: { nodes: __spreadArrays(Array(2)).map(function () { return ({ units: 1, subtree: { nodes: [1, 1] } }); }) }
+        subtree: { nodes: __spread(Array(2)).map(function () { return ({ units: 1, subtree: { nodes: [1, 1] } }); }) }
     }); })
 };
 function getRhythmPoints(tree, depth, start, totalDuration) {
@@ -259,7 +316,7 @@ function getRhythmPoints(tree, depth, start, totalDuration) {
         else {
             var nextDepth = getRhythmPoints(node.subtree, depth + 1, position, unitSize * node.units);
             var adjustedFirst = i === 0 ? __assign(__assign({}, nextDepth[0]), { depth: depth }) : nextDepth[0];
-            result.push.apply(result, __spreadArrays([adjustedFirst], nextDepth.slice(1)));
+            result.push.apply(result, __spread([adjustedFirst], nextDepth.slice(1)));
             position += unitSize * node.units;
         }
     });
@@ -413,12 +470,25 @@ exports.drawCircleP = drawCircleP;
 
 },{"./convert":10}],12:[function(require,module,exports){
 "use strict";
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
 };
 exports.__esModule = true;
 var convert_1 = require("./convert");
@@ -439,7 +509,7 @@ function drawLineP(ctx, propOptions, start, end) {
     for (var _i = 4; _i < arguments.length; _i++) {
         args[_i - 4] = arguments[_i];
     }
-    drawLine.apply(void 0, __spreadArrays([ctx,
+    drawLine.apply(void 0, __spread([ctx,
         convert_1.propToAbs(ctx, start, propOptions || undefined),
         convert_1.propToAbs(ctx, end, propOptions || undefined)], args));
 }
@@ -484,22 +554,22 @@ var MouseArea = (function () {
         this.id = id;
     }
     MouseArea.prototype.emitMouseDown = function (p) {
-        this.emitter.emit("mousedown", p);
+        this.emitter.emit('mousedown', p);
     };
     MouseArea.prototype.onMouseDown = function (callback) {
-        this.emitter.on("mousedown", callback);
+        this.emitter.on('mousedown', callback);
     };
     MouseArea.prototype.emitMouseEnter = function () {
-        this.emitter.emit("mouseenter");
+        this.emitter.emit('mouseenter');
     };
     MouseArea.prototype.onMouseEnter = function (callback) {
-        this.emitter.on("mouseenter", callback);
+        this.emitter.on('mouseenter', callback);
     };
     MouseArea.prototype.emitMouseLeave = function () {
-        this.emitter.emit("mouseleave");
+        this.emitter.emit('mouseleave');
     };
     MouseArea.prototype.onMouseLeave = function (callback) {
-        this.emitter.on("mouseleave", callback);
+        this.emitter.on('mouseleave', callback);
     };
     return MouseArea;
 }());
@@ -521,10 +591,13 @@ var CanvasMouseManager = (function (_super) {
         canvas.draggable = true;
         canvas.ondragstart = function (event) { return _this.handleDragStart(event); };
         canvas.ondrag = function (event) { return _this.handleDrag(event); };
-        this.dragImage = document.createElement("img");
-        this.dragImage.setAttribute("style", "width:" + 1 + "px;height:" + 1 + "px;border:none;display:block");
-        this.dragImage.src =
-            "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+        canvas.onmouseleave = function (event) { return _this.handleMouseLeave(event); };
+        this.dragImage = document.createElement('img');
+        this.dragImage.setAttribute('style', 'width:' + 1 + 'px;height:' + 1 + 'px;border:none;display:block');
+        this.dragImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+    };
+    CanvasMouseManager.prototype.getTopHover = function () {
+        return this.hover.values().next().value;
     };
     CanvasMouseManager.prototype.createArea = function (left, top, right, bottom, id) {
         var area = new MouseArea({ left: left, top: top, right: right, bottom: bottom }, id);
@@ -543,21 +616,25 @@ var CanvasMouseManager = (function (_super) {
         if (area) {
             area.emitMouseDown(base_1.subtractPoints(point, { x: area.rect.left, y: area.rect.top }));
         }
-        this.emit("mousedown", event);
+        this.emit('mousedown', event);
     };
     CanvasMouseManager.prototype.handleMove = function (event) {
-        var _this = this;
         var hovering = this.getAllAreasUnderPoint(clickedPointInCanvas_1.mousePointInElement(this.canvas, event));
+        var wasHovering = this.hover;
+        this.hover = hovering;
         hovering.forEach(function (area) {
-            if (!_this.hover.has(area))
+            if (!wasHovering.has(area))
                 area.emitMouseEnter();
         });
-        this.hover.forEach(function (area) {
+        wasHovering.forEach(function (area) {
             if (!hovering.has(area))
                 area.emitMouseLeave();
         });
-        this.hover = hovering;
-        this.emit("mousemove", event);
+        this.emit('mousemove', event);
+    };
+    CanvasMouseManager.prototype.handleMouseLeave = function (event) {
+        this.hover.forEach(function (area) { return area.emitMouseLeave(); });
+        this.hover.clear();
     };
     CanvasMouseManager.prototype.handleDragStart = function (event) {
         this.dragStart = { x: event.clientX, y: event.clientY };
@@ -568,7 +645,6 @@ var CanvasMouseManager = (function (_super) {
     CanvasMouseManager.prototype.handleDrag = function (event) {
         if (Date.now() - this.lastDragStamp > dragDebounceInterval) {
             var movement = base_1.subtractPoints({ x: event.clientX, y: event.clientY }, this.dragStart);
-            console.log(movement);
             this.lastDragStamp = Date.now();
         }
         else {
@@ -581,17 +657,26 @@ exports.CanvasMouseManager = CanvasMouseManager;
 },{"../../utils/clickedPointInCanvas":16,"@musicenviro/base":4,"events":32}],15:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
+var events_1 = require("events");
 exports.keysPressed = {};
+var emitter = new events_1.EventEmitter();
+function onTransition(callback) {
+    emitter.on("transition", callback);
+}
+exports.onTransition = onTransition;
+function emitTransition(key, newState) {
+    emitter.emit("transition", key, newState);
+}
 window.addEventListener('keydown', function (ev) {
-    console.log(ev.key);
     exports.keysPressed[ev.key] = true;
+    emitTransition(ev.key, 'Down');
 });
 window.addEventListener('keyup', function (ev) {
-    console.log(ev.key, 'up');
     exports.keysPressed[ev.key] = false;
+    emitTransition(ev.key, 'Up');
 });
 
-},{}],16:[function(require,module,exports){
+},{"events":32}],16:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 function mousePointInElement(canvas, e) {
