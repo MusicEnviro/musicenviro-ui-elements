@@ -9,7 +9,8 @@
 		"sourceMap": true,
 		"outDir": "./lib",
 		"rootDir": "./src",
-		"jsx": "react"
+		"jsx": "react",
+		"downlevelIteration": true
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules"]

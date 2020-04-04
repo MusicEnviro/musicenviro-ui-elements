@@ -32,7 +32,8 @@ const hoverAreaRadius = 15;
 
 export class SingleNoteLane extends LazyCanvasRedrawer {
 	gridTree: IRhythmTree;
-	gridTreePoints: ITreePoint[];
+
+	gridTreePoints: Array<ITreePoint & { area?: MouseArea }>;
 
 	mouseManager = new CanvasMouseManager();
 
@@ -108,12 +109,8 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		onTransition((key, newState) => {
 			switch (key) {
 				case 'Shift':
-					if (newState === 'Down') {
-						this.setHighlightsForShiftKey();
-					}
-					else {
-						this.setHighlightsForNoShift();
-					}
+					this.updateHighlights();
+					break;
 			}
 		});
 	}
@@ -134,39 +131,36 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 				i,
 			);
 
-			area.onMouseEnter(() => {
-				if (keysPressed.Shift) {
-					this.setHighlightsForShiftKey()
-				} else {
-					this.addHighlight(area);
-				}
-			});
-			area.onMouseLeave(() => this.removeAllHighlights());
+			area.onMouseEnter(() => this.updateHighlights());
+			area.onMouseLeave(() => this.updateHighlights());
 			area.onMouseDown(() => this.toggleNote(pos));
+
+			treePoint.area = area;
 		});
 	}
 
-	setHighlightsForShiftKey() {
-		// hover is a set, so we have to get one value using an iterator
-		const pos = this.mouseManager.getTopHover().pos;
-		
-		this.highlights.clear();
-		
-		const division = (pos * 16) % 4;
-		[0, 1, 2, 3].forEach(beat => {
-			this.highlights.add(this.mouseManager.areas[beat * 4 + division]);
-		});
-
-		console.log('set the highlights')
-
-		this.redraw()
-	}
-	
-	setHighlightsForNoShift() {
-		this.highlights.clear();
-		this.addHighlight(this.mouseManager.getTopHover())
+	getHoverPoint(): ITreePoint & { area?: MouseArea } {
+		const hover = this.mouseManager.getTopHover();
+		return this.gridTreePoints.find(point => point.area === hover);
 	}
 
+	updateHighlights() {
+		this.highlights.clear();
+		const hoverPoint = this.getHoverPoint();
+		if (hoverPoint) {
+			if (keysPressed.Shift) {
+				this.multiplyPoint(hoverPoint).forEach(point => this.addHighlight(point.area));
+			} else {
+				this.highlights.add(hoverPoint.area);
+			}
+		}
+		this.redraw(true);
+	}
+
+	multiplyPoint(point: ITreePoint): Array<ITreePoint & { area?: MouseArea }> {
+		const division = (point.position * 16) % 4;
+		return [0, 1, 2, 3].map(beat => this.gridTreePoints[beat * 4 + division]);
+	}
 
 	notes: number[] = [];
 
@@ -175,7 +169,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		if (index === -1) {
 			this.highlights.forEach(area => this.notes.push(area.id * 0.0625));
 		} else {
-			this.notes.splice(index, 1);
+			this.notes = this.notes.filter(pos => ![...this.highlights].map(area => area.id * 0.0625).includes(pos));
 		}
 		this.redraw();
 	}

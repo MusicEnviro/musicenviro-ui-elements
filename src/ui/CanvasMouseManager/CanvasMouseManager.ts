@@ -1,6 +1,6 @@
-import { IPoint, subtractPoints, IRect, pointInRect } from "@musicenviro/base";
-import { EventEmitter } from "events";
-import { mousePointInElement } from "../../utils/clickedPointInCanvas";
+import { IPoint, subtractPoints, IRect, pointInRect } from '@musicenviro/base';
+import { EventEmitter } from 'events';
+import { mousePointInElement } from '../../utils/clickedPointInCanvas';
 
 const dragDebounceInterval = 100;
 
@@ -9,34 +9,34 @@ let counter = 0;
 export class MouseArea {
 	rect: IRect;
 	id: number;
-	
+
 	// hide the actual emitter, type-safe methods below.
-	private emitter = new EventEmitter()
-	
+	private emitter = new EventEmitter();
+
 	constructor(rect: IRect, id: number) {
 		this.rect = rect;
-		this.id = id
+		this.id = id;
 	}
 
 	emitMouseDown(p: IPoint) {
-		this.emitter.emit("mousedown", p)
+		this.emitter.emit('mousedown', p);
 	}
 	onMouseDown(callback: (p: IPoint) => void): void {
-		this.emitter.on("mousedown", callback);
+		this.emitter.on('mousedown', callback);
 	}
 
 	emitMouseEnter() {
-		this.emitter.emit("mouseenter")
+		this.emitter.emit('mouseenter');
 	}
 	onMouseEnter(callback: () => void): void {
-		this.emitter.on("mouseenter", callback);
+		this.emitter.on('mouseenter', callback);
 	}
-	
+
 	emitMouseLeave() {
-		this.emitter.emit("mouseleave")
+		this.emitter.emit('mouseleave');
 	}
 	onMouseLeave(callback: () => void): void {
-		this.emitter.on("mouseleave", callback);
+		this.emitter.on('mouseleave', callback);
 	}
 }
 
@@ -48,13 +48,13 @@ export class CanvasMouseManager extends EventEmitter {
 	dragStart: IPoint;
 
 	areas: MouseArea[] = [];
-	hover = new Set<MouseArea>()
+	hover = new Set<MouseArea>();
 
 	initialize(canvas: HTMLCanvasElement) {
 		// we're going to take over the events, this could override or be overridden
 		// by calls elsewhere. Best to subscribe to events from this manager,
 		// we echo them out.
-		this.canvas = canvas
+		this.canvas = canvas;
 
 		canvas.onmousedown = event => this.handleMouseDown(event);
 		canvas.onmousemove = event => this.handleMove(event);
@@ -69,28 +69,18 @@ export class CanvasMouseManager extends EventEmitter {
 		// for hiding the ghost image rendered by browsers on drag
 		// --------------------------------------------------------------------------
 
-		this.dragImage = document.createElement("img");
-		this.dragImage.setAttribute(
-			"style",
-			"width:" + 1 + "px;height:" + 1 + "px;border:none;display:block"
-		);
-		this.dragImage.src =
-			"data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+		this.dragImage = document.createElement('img');
+		this.dragImage.setAttribute('style', 'width:' + 1 + 'px;height:' + 1 + 'px;border:none;display:block');
+		this.dragImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 
 		// this.dragImage.setAttribute('opacity', '0') // not sure if this is necessary
 	}
 
 	getTopHover() {
-		return this.hover.values().next().value
+		return this.hover.values().next().value;
 	}
 
-	createArea(
-		left: number,
-		top: number,
-		right: number,
-		bottom: number,
-		id: number
-	): MouseArea {
+	createArea(left: number, top: number, right: number, bottom: number, id: number): MouseArea {
 		const area = new MouseArea({ left, top, right, bottom }, id);
 		this.areas.push(area);
 		return area;
@@ -101,42 +91,40 @@ export class CanvasMouseManager extends EventEmitter {
 	}
 
 	getAllAreasUnderPoint(point: IPoint): Set<MouseArea> {
-		return new Set(this.areas.filter(area => pointInRect(point, area.rect)))
+		return new Set(this.areas.filter(area => pointInRect(point, area.rect)));
 	}
 
 	handleMouseDown(event: MouseEvent) {
-		const point = mousePointInElement(this.canvas, event)
-		
+		const point = mousePointInElement(this.canvas, event);
+
 		const area = this.getAreaUnderPoint(point);
-		
+
 		if (area) {
-			area.emitMouseDown(
-				subtractPoints(point, { x: area.rect.left, y: area.rect.top })
-			);
+			area.emitMouseDown(subtractPoints(point, { x: area.rect.left, y: area.rect.top }));
 		}
-		this.emit("mousedown", event);
+		this.emit('mousedown', event);
 	}
 
 	handleMove(event: MouseEvent) {
-		const hovering = this.getAllAreasUnderPoint(mousePointInElement(this.canvas, event))
-		
+		const hovering = this.getAllAreasUnderPoint(mousePointInElement(this.canvas, event));
+		const wasHovering = this.hover;
+		this.hover = hovering;
+
 		// get leave/enter transitions
 		hovering.forEach(area => {
-			if (!this.hover.has(area)) area.emitMouseEnter()
-		})
+			if (!wasHovering.has(area)) area.emitMouseEnter();
+		});
 
-		this.hover.forEach(area => {
-			if (!hovering.has(area)) area.emitMouseLeave()
-		})
+		wasHovering.forEach(area => {
+			if (!hovering.has(area)) area.emitMouseLeave();
+		});
 
-		this.hover = hovering
-
-		this.emit("mousemove", event)
+		this.emit('mousemove', event);
 	}
 
 	handleMouseLeave(event: MouseEvent) {
-		this.hover.forEach(area => area.emitMouseLeave())
-		this.hover.clear()
+		this.hover.forEach(area => area.emitMouseLeave());
+		this.hover.clear();
 	}
 
 	handleDragStart(event: DragEvent) {
@@ -155,12 +143,7 @@ export class CanvasMouseManager extends EventEmitter {
 		if (Date.now() - this.lastDragStamp > dragDebounceInterval) {
 			// if (event.clientX === 0 && event.clientY === 0) return;
 
-			const movement = subtractPoints(
-				{ x: event.clientX, y: event.clientY },
-				this.dragStart
-			);
-
-			console.log(movement);
+			const movement = subtractPoints({ x: event.clientX, y: event.clientY }, this.dragStart);
 
 			this.lastDragStamp = Date.now();
 		} else {
