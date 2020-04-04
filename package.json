@@ -11,7 +11,7 @@
 	"author": "Geof Holbrook",
 	"license": "ISC",
 	"dependencies": {
-		"@musicenviro/base": "file:../musicenviro__base",
+		"@musicenviro/base": "^0.1.1",
 		"@types/debounce": "^1.2.0",
 		"gh-pages": "^2.2.0",
 		"lodash": "^4.17.15",
