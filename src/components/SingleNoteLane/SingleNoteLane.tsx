@@ -10,17 +10,16 @@ import { drawLineP } from '../../graphics/canvas-drawing/drawLine';
 import { drawCircleP, drawCircle } from '../../graphics/canvas-drawing/drawCircle';
 import { IRhythmTree, ITreePoint, getRhythmPoints, tree44 } from './trees';
 import * as React from 'react';
-import { IPoint, subtractPoints, rectCenter } from '@musicenviro/base';
+import { rectCenter } from '@musicenviro/base';
 import { CanvasMouseManager, MouseArea } from '../../ui/CanvasMouseManager/CanvasMouseManager';
-import { ILazyCanvasRedrawerProps } from '../../generic-components/LazyCanvasRedrawer/types';
 import { propToAbs, absToProp } from '../../graphics/canvas-drawing/convert';
 import { keysPressed, onTransition } from '../../ui/key-monitor';
+import { ISingleNoteLaneProps } from './@types';
 
 // =============================================================================
 // config
 // =============================================================================
 
-const dragDebounceInterval = 50; // for dragging
 
 const radii = [7, 5, 3, 2];
 const tickSizes = [0.2, 0.15, 0.075, 0.05];
@@ -30,14 +29,14 @@ const hoverAreaRadius = 15;
 // main
 // =============================================================================
 
-export class SingleNoteLane extends LazyCanvasRedrawer {
+export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	gridTree: IRhythmTree;
 
 	gridTreePoints: Array<ITreePoint & { area?: MouseArea }>;
 
 	mouseManager = new CanvasMouseManager();
 
-	constructor(props: ILazyCanvasRedrawerProps) {
+	constructor(props: ISingleNoteLaneProps) {
 		super(props);
 		this.setGridTree(tree44);
 	}
@@ -50,6 +49,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		},
 		width: 750,
 		height: 50,
+		onChange: () => {}
 	};
 
 	setGridTree(tree: IRhythmTree) {
@@ -171,6 +171,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer {
 		} else {
 			this.notes = this.notes.filter(pos => ![...this.highlights].map(area => area.id * 0.0625).includes(pos));
 		}
+		this.props.onChange(this.notes)
 		this.redraw();
 	}
 
