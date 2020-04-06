@@ -36,6 +36,8 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 
 	mouseManager = new CanvasMouseManager();
 
+	notes: number[] = [];
+
 	constructor(props: ISingleNoteLaneProps) {
 		super(props);
 		this.setGridTree(tree44);
@@ -51,6 +53,11 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		height: 50,
 		onChange: () => {}
 	};
+
+	setNotes(notes: number[]) {
+		this.notes = notes
+		this.redraw()
+	}
 
 	setGridTree(tree: IRhythmTree) {
 		this.gridTree = tree;
@@ -161,8 +168,6 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		const division = (point.position * 16) % 4;
 		return [0, 1, 2, 3].map(beat => this.gridTreePoints[beat * 4 + division]);
 	}
-
-	notes: number[] = [];
 
 	toggleNote(pos: number) {
 		const index = this.notes.indexOf(pos);
