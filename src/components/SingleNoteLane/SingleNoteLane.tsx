@@ -24,7 +24,7 @@ import { ISingleNoteLaneProps } from './@types';
 const radii = [7, 5, 3, 2];
 const tickSizes = [0.2, 0.15, 0.075, 0.05];
 const hoverAreaRadius = 15;
-
+const padding = 25;
 // =============================================================================
 // main
 // =============================================================================
@@ -43,7 +43,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		this.setGridTree(tree44);
 	}
 
-	static defaultProps = {
+	static defaultProps: ISingleNoteLaneProps = {
 		style: {
 			...lazyCanvasRedrawerDefaultProps.style,
 			// border: 'solid black 1px',
@@ -65,7 +65,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	}
 
 	draw(ctx: CanvasRenderingContext2D) {
-		drawLineP(ctx, { padding: 10 }, { x: 0, y: 0.5 }, { x: 1, y: 0.5 }, 'gray');
+		drawLineP(ctx, { padding }, { x: 0, y: 0.5 }, { x: 1, y: 0.5 }, 'gray');
 
 		this.highlights.forEach(area => {
 			drawCircle(ctx, rectCenter(area.rect), hoverAreaRadius, 'gray', false, [3, 3]);
@@ -74,7 +74,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		this.notes.forEach(pos => {
 			drawCircleP(
 				ctx,
-				{ padding: 10, fixedRadius: true },
+				{ padding, fixedRadius: true },
 				{ x: pos, y: 0.5 },
 				hoverAreaRadius - 2,
 				this.props.style.color,
@@ -86,7 +86,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		this.gridTreePoints.forEach(point => {
 			// drawLineP(
 			// 	ctx,
-			// 	{ padding: 10 },
+			// 	{ padding },
 			// 	{ x: point.position, y: 0.5 + tickSizes[point.depth] * 0.5 },
 			// 	{ x: point.position, y: 0.5 - tickSizes[point.depth] * 0.5 },
 			// 	'gray'
@@ -94,7 +94,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 
 			drawCircleP(
 				ctx,
-				{ padding: 10, fixedRadius: true },
+				{ padding, fixedRadius: true },
 				{ x: point.position, y: 0.5 },
 				radii[point.depth],
 				'gray',
@@ -127,7 +127,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 			const pos = treePoint.position;
 			const prop = { x: pos, y: 0.5 };
 			const center = propToAbs(this.ref.current.getContext('2d'), prop, {
-				padding: 10,
+				padding,
 			});
 
 			const area = this.mouseManager.createArea(

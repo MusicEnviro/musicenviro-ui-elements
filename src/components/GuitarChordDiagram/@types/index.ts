@@ -8,7 +8,7 @@ export interface IFingeredNote {
 }
 
 export interface IGuitarChordDiagramProps extends ILazyCanvasRedrawerProps {
-    style: CSSProperties
+    style?: CSSProperties
     baseNote: number | null;
     numFrets: number;
     fingeredNotes: IFingeredNote[];
