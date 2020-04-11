@@ -6,9 +6,9 @@ export const lazyCanvasRedrawerDefaultProps: ILazyCanvasRedrawerProps = {
 	width: 100,
 	height: 100,
 	style: {
-		boxSizing: 'border-box',
-		width: '100%',
-		height: '100%',
+		// boxSizing: 'border-box',
+		// width: '100%',
+		// height: '100%',
 	}
 };
 
@@ -50,11 +50,11 @@ export class LazyCanvasRedrawer<
 			const canvas = this.ref.current as HTMLCanvasElement;
 
 			// Make it visually fill the positioned parent
-			canvas.style.width = "100%";
-			canvas.style.height = "100%";
+			// canvas.style.width = "100%";
+			// canvas.style.height = "100%";
 			// ...then set the internal size to match
-			canvas.width = canvas.clientWidth;
-			canvas.height = canvas.clientHeight;
+			// canvas.width = canvas.clientWidth;
+			// canvas.height = canvas.clientHeight;
 
 			const ctx = canvas.getContext("2d");
 
@@ -90,7 +90,7 @@ export class LazyCanvasRedrawer<
 	render() {
 		return (
 			<canvas
-				style={this.props.style}
+				style={{width: this.props.width, height: this.props.height}}
 				height={this.props.height}
 				width={this.props.width}
 				ref={this.ref}
