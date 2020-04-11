@@ -30,6 +30,14 @@ const padding = 25;
 // =============================================================================
 
 export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
+	static defaultProps = {
+		notes: [],
+		noteColor: 'red',
+		width: 750,
+		height: 50,
+		onChange: () => { console.log('change') }
+	} as ISingleNoteLaneProps;
+	
 	gridTree: IRhythmTree;
 
 	gridTreePoints: Array<ITreePoint & { area?: MouseArea }>;
@@ -41,22 +49,6 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	constructor(props: ISingleNoteLaneProps) {
 		super(props);
 		this.setGridTree(tree44);
-	}
-
-	static defaultProps: ISingleNoteLaneProps = {
-		style: {
-			...lazyCanvasRedrawerDefaultProps.style,
-			// border: 'solid black 1px',
-			color: 'red',
-		},
-		width: 750,
-		height: 50,
-		onChange: () => {}
-	};
-
-	setNotes(notes: number[]) {
-		this.notes = notes
-		this.redraw()
 	}
 
 	setGridTree(tree: IRhythmTree) {
@@ -77,7 +69,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 				{ padding, fixedRadius: true },
 				{ x: pos, y: 0.5 },
 				hoverAreaRadius - 2,
-				this.props.style.color,
+				this.props.noteColor,
 				true,
 				0.5,
 			);
@@ -110,6 +102,12 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		this.mouseManager.initialize(this.ref.current);
 		this.addAreas();
 		this.setupKeyEvents();
+		this.notes = this.props.notes.slice()
+	}
+	
+	componentDidUpdate() {
+		this.notes = this.props.notes.slice()
+		this.redraw(true)
 	}
 
 	private setupKeyEvents() {
@@ -171,13 +169,18 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 
 	toggleNote(pos: number) {
 		const index = this.notes.indexOf(pos);
+		let newNotes
+
 		if (index === -1) {
-			this.highlights.forEach(area => this.notes.push(area.id * 0.0625));
+			newNotes = [...this.notes, ...[...this.highlights].map(area => area.id * 0.0625)]
 		} else {
-			this.notes = this.notes.filter(pos => ![...this.highlights].map(area => area.id * 0.0625).includes(pos));
+			newNotes = this.notes.filter(pos => ![...this.highlights].map(area => area.id * 0.0625).includes(pos));
 		}
-		this.props.onChange(this.notes)
-		this.redraw();
+
+		this.props.onChange(newNotes)
+		this.notes = newNotes
+		// this.props.onChange([...this.notes, pos])
+		// this.redraw();
 	}
 
 	highlights = new Set<MouseArea>();
@@ -197,3 +200,4 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		this.redraw(true);
 	}
 }
+

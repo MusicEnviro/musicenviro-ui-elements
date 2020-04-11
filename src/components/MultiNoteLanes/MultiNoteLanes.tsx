@@ -9,9 +9,9 @@ export class MultiNoteLanes extends React.Component<MultiNoteLanesProps> {
         
     lanes = [0,1,2,3].map(n => React.createRef<SingleNoteLane>());
 
-    setNotes(lane: number, notes: number[]) {
-        this.lanes[lane].current.setNotes(notes)
-    }
+    // setNotes(lane: number, notes: number[]) {
+    //     this.lanes[lane].current.setNotes(notes)
+    // }
 
     render() {
 		return (
