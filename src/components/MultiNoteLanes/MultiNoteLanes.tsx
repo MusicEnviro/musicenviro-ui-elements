@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SingleNoteLane } from '../SingleNoteLane/SingleNoteLane';
 
 interface MultiNoteLanesProps {
-	onChange: (instrument: number, notes: number[]) => void;
+	onChange?: (instrument: number, notes: number[]) => void;
 }
 
 export class MultiNoteLanes extends React.Component<MultiNoteLanesProps> {

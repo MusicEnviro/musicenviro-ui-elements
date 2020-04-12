@@ -6,13 +6,15 @@ import { IPoint, pointInRect } from "@musicenviro/base";
 import { mousePointInElement } from "../../utils/clickedPointInCanvas";
 
 const defaultProps: IPianoKeyboardProps = {
+	...lazyCanvasRedrawerDefaultProps,
+	width: 500,
+	height: 100,
 	onNoteDown: () => {},
 	onNoteUp: () => {},
 	keyRange: {
 		min: 36,
 		max: 72
 	},
-	...lazyCanvasRedrawerDefaultProps,
 };
 
 export { IPianoKeyboardProps };
@@ -82,10 +84,11 @@ export class PianoKeyboard extends LazyCanvasRedrawer<
 	render() {
 		return (
 			<canvas
-				height={"200px"}
+				style={{width: this.props.width, height: this.props.height}}
+				width={this.props.width}
+				height={this.props.height}
 				ref={this.ref}
 				className="keyboard"
-				style={{ width: "100%", height: "100%" }}
 				onClick={(e: any) => this.handleClick(e)}
 			></canvas>
 		);
