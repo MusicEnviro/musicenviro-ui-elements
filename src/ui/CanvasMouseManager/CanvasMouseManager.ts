@@ -123,8 +123,9 @@ export class CanvasMouseManager extends EventEmitter {
 	}
 
 	handleMouseLeave(event: MouseEvent) {
-		this.hover.forEach(area => area.emitMouseLeave());
+		const wasHovering = [...this.hover]
 		this.hover.clear();
+		wasHovering.forEach(area => area.emitMouseLeave());
 	}
 
 	handleDragStart(event: DragEvent) {
