@@ -4,6 +4,7 @@ import { GuitarChordDiagram } from '../components/GuitarChordDiagram/GuitarChord
 import { SingleNoteLane } from '../components/SingleNoteLane/SingleNoteLane';
 import { ButtonGridExample } from './ButtonGridExample';
 import { MultiNoteLanes } from '../components/MultiNoteLanes/MultiNoteLanes';
+import { DiatonicPianoRoll } from '../components/DiatonicPianoRoll/DiatonicPianoRoll';
 
 type UIElement =
 	| 'PianoKeyboard'
@@ -23,12 +24,11 @@ const uiElements = [
 ];
 
 export function SimpleClient() {
-	const [element, setElement] = React.useState<UIElement>('PianoKeyboard');
+	const [element, setElement] = React.useState<UIElement>('DiatonicPianoRoll');
 
 	function getUIElement() {
 		switch (element) {
 			case 'PianoKeyboard':
-				console.log(element);
 				return <PianoKeyboard />;
 			case 'GuitarChordDiagram':
 				return <GuitarChordDiagram />;
@@ -39,7 +39,7 @@ export function SimpleClient() {
 			case 'MultiNoteLanes':
 				return <MultiNoteLanes />;
 			default:
-				return <div>not implemented</div>;
+				return <DiatonicPianoRoll />;
 		}
 	}
 
@@ -58,7 +58,7 @@ export function SimpleClient() {
 					onChange={e => setElement((e.target as HTMLSelectElement).value as UIElement)}
 				>
 					{uiElements.map(name => (
-						<option>{name}</option>
+						<option key={name}>{name}</option>
 					))}
 				</select>
 			</p>

@@ -11,8 +11,9 @@
 	"author": "Geof Holbrook",
 	"license": "ISC",
 	"dependencies": {
-		"@musicenviro/base": "^0.2.1",
+		"@musicenviro/base": "file:../musicenviro__base",
 		"@types/debounce": "^1.2.0",
+		"@types/styled-components": "^5.0.1",
 		"gh-pages": "^2.2.0",
 		"lodash": "^4.17.15",
 		"react": "^16.12.0",
@@ -31,6 +32,7 @@
 		"eslint-plugin-react": "^7.18.3",
 		"prettier": "^1.19.1",
 		"react-dom": "^16.13.1",
+		"styled-components": "^5.1.0",
 		"typescript": "^3.7.5"
 	}
 }
