@@ -3,8 +3,8 @@ import * as React from "react";
 import { ILazyCanvasRedrawerProps } from "./types";
 
 export const lazyCanvasRedrawerDefaultProps: ILazyCanvasRedrawerProps = {
-	width: 100,
-	height: 100,
+	width: 200,
+	height: 200,
 	style: {
 		// boxSizing: 'border-box',
 		// width: '100%',
