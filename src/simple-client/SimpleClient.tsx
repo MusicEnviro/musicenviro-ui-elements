@@ -39,7 +39,7 @@ export function SimpleClient() {
 			case 'MultiNoteLanes':
 				return <MultiNoteLanes />;
 			default:
-				return <DiatonicPianoRoll />;
+				return <DiatonicPianoRoll height={600} width={900}/>;
 		}
 	}
 
@@ -48,7 +48,7 @@ export function SimpleClient() {
 			style={{
 				position: 'absolute',
 				left: 100,
-				top: 100,
+				top: 50,
 			}}
 		>
 			<p>
