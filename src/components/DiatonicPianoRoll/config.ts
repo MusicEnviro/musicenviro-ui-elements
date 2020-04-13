@@ -1,4 +1,5 @@
-export const lanePadding = 3
+export const lanePadding = 0
+export const cellPadding = 1
 
 export const stepTypeAppearance = {
     'Root': {
