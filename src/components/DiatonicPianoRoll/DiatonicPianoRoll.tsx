@@ -28,9 +28,8 @@ interface IDiatonicPianoRollProps {
 	mode?: Mode;
 	width?: Pixels;
 	height?: Pixels;
-	// onClick?: (laneIndex: number, cellIndex: number) => void;
+	onCellChange?: (lane: number, cell: number, active: boolean) => void;
 }
-
 
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
 	const [lanes, setLanes] = React.useState<ILaneData[]>(makeDefaultLanes());
@@ -38,13 +37,19 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 	return (
 		<Roll className="diatonic-piano-roll" style={{ height: props.height, width: props.width }}>
 			{getLanePercentageHeights(props)
-				.map((height, i) => (
+				.map((height, laneIndex) => (
 					<RollLane
-						stepType={stepType(props.stepRange.min + i)}
-						key={'lane' + i}
+						stepType={stepType(props.stepRange.min + laneIndex)}
+						key={'lane' + laneIndex}
 						height={height + '%'}
-						laneData={lanes[i]}
-						onClick={cellIndex => toggleCell(i, cellIndex)}
+						laneData={lanes[laneIndex]}
+						onCellChange={(cellIndex, active) => {
+							if (props.onCellChange) {
+								props.onCellChange(laneIndex, cellIndex, active)
+							} else {
+								setCell(laneIndex, cellIndex, active)
+							}
+						}}
 					/>
 				))
 				.reverse()}
@@ -64,8 +69,7 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 		}));
 	}
 
-	function toggleCell(laneIndex: number, cellIndex: number) {
-		console.log(laneIndex, cellIndex)
+	function setCell(laneIndex: number, cellIndex: number, active: boolean) {
 		setLanes(
 			lanes.map((lane, li) =>
 				laneIndex !== li
@@ -73,7 +77,7 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 					: {
 							...lane,
 							cells: lane.cells.map((cell, ci) =>
-								cellIndex !== ci ? cell : { ...cell, active: !cell.active },
+								cellIndex !== ci ? cell : { ...cell, active },
 							),
 					  },
 			),

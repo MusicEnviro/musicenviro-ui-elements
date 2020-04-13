@@ -23,12 +23,11 @@ interface IRollLaneProps {
 	height?: string;
 	stepType?: DiatonicStepType;
     laneData: ILaneData;
-    onClick?: (cellIndex: number) => void
-    
+    onCellChange?: (cellIndex: number, active: boolean) => void   
 }
 
 export const RollLane: React.FunctionComponent<IRollLaneProps> = props => {
-	return (
+    return (
 		<Lane style={{ height: props.height }}>
 			<LaneContents
 			// className={`color-${stepTypeAppearance[props.stepType].classStem}-1`}
@@ -39,7 +38,7 @@ export const RollLane: React.FunctionComponent<IRollLaneProps> = props => {
 						depth={rp.depth}
                         stepType={props.stepType}
                         activated={props.laneData.cells[i].active}
-						onClick={() => props.onClick(i)}
+                        onChange={active => props.onCellChange(i, active)}
 					></LaneCell>
 				))}
 			</LaneContents>
