@@ -1,6 +1,6 @@
 import { createElement } from "react";
 
-import { ButtonGrid } from "../components/ButtonGrid/ButtonGrid";
+import { ButtonGrid } from "../../components/ButtonGrid/ButtonGrid";
 
 export function ButtonGridExample() {
 	return createElement(ButtonGrid, {

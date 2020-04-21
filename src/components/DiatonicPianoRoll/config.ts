@@ -7,7 +7,7 @@ export const stepTypeAppearance = {
         heightRatio: 1.5
     },
     'Fifth': {
-        classStem: 'fifth',
+        classStem: 'other-chord-note',
         heightRatio: 1.35
     },
     'OtherChordNote': {

@@ -2,9 +2,10 @@ import * as React from 'react';
 import { PianoKeyboard } from '../components/PianoKeyboard/PianoKeyboard';
 import { GuitarChordDiagram } from '../components/GuitarChordDiagram/GuitarChordDiagram';
 import { SingleNoteLane } from '../components/SingleNoteLane/SingleNoteLane';
-import { ButtonGridExample } from './ButtonGridExample';
+import { ButtonGridExample } from './examples/ButtonGridExample';
 import { MultiNoteLanes } from '../components/MultiNoteLanes/MultiNoteLanes';
 import { DiatonicPianoRoll } from '../components/DiatonicPianoRoll/DiatonicPianoRoll';
+import { DiatonicPianoRollExample } from './examples/DiatonicPianoRollExample';
 
 type UIElement =
 	| 'PianoKeyboard'
@@ -39,7 +40,7 @@ export function SimpleClient() {
 			case 'MultiNoteLanes':
 				return <MultiNoteLanes />;
 			default:
-				return <DiatonicPianoRoll height={600} width={900}/>;
+				return <DiatonicPianoRollExample/>;
 		}
 	}
 
