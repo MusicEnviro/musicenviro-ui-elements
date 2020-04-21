@@ -6,7 +6,8 @@
 	"scripts": {
 		"start": "ts-node src/index.ts",
 		"view": "open ./simple-client/index.html",
-		"watch": "watchify lib/simple-client/index.js -o simple-client/bundle.js"
+		"watch": "watchify lib/simple-client/index.js -o simple-client/bundle.js",
+		"build": "sh ./css-copy.sh && tsc"
 	},
 	"author": "Geof Holbrook",
 	"license": "ISC",
