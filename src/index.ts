@@ -3,3 +3,4 @@ export { GuitarChordDiagram, IGuitarChordDiagramProps, IFingeredNote } from "./c
 export * from "./components/ButtonGrid";
 export * from "./components/SingleNoteLane/SingleNoteLane";
 export * from "./components/MultiNoteLanes/MultiNoteLanes";
+export * from "./components/DiatonicPianoRoll/DiatonicPianoRoll";

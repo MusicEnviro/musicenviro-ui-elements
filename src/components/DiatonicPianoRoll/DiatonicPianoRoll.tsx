@@ -22,7 +22,7 @@ const Roll = styled.div`
 	padding-bottom: ${lanePadding}px;
 `;
 
-interface IDiatonicPianoRollProps {
+export interface IDiatonicPianoRollProps {
 	stepRange?: IRange<DiatonicStep>;
 	zeroPitch?: MidiPitch; // the pitch class of zeroPitch is the key
 	mode?: Mode;
