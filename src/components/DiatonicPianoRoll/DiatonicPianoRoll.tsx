@@ -23,6 +23,7 @@ const Roll = styled.div`
 `;
 
 export interface IDiatonicPianoRollProps {
+	initialLanes?: ILaneData[];
 	stepRange?: IRange<DiatonicStep>;
 	zeroPitch?: MidiPitch; // the pitch class of zeroPitch is the key
 	mode?: Mode;
@@ -34,7 +35,7 @@ export interface IDiatonicPianoRollProps {
 export { ILaneData, ICellData } from './@types'
 
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
-	const [lanes, setLanes] = React.useState<ILaneData[]>(makeDefaultLanes());
+	// const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes)
 
 	return (
 		<Roll className="diatonic-piano-roll" style={{ height: props.height, width: props.width }}>
@@ -44,7 +45,7 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 						stepType={stepType(props.stepRange.min + laneIndex)}
 						key={'lane' + laneIndex}
 						height={height + '%'}
-						laneData={lanes[laneIndex]}
+						laneData={props.initialLanes[laneIndex]}
 						onCellChange={(cellIndex, active) => {
 							if (props.onCellChange) {
 								props.onCellChange(laneIndex, cellIndex, active)
@@ -62,30 +63,31 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 	// function scope helpers
 	// ----------------------------------------------------------------------------
 
-	function makeDefaultLanes() {
-		return fillRange(props.stepRange).map(() => ({
-			gridTree: tree44,
-			cells: getRhythmPoints(tree44).map(() => ({
-				active: false,
-			})),
-		}));
-	}
 
 	function setCell(laneIndex: number, cellIndex: number, active: boolean) {
 		setLanes(
-			lanes.map((lane, li) =>
-				laneIndex !== li
-					? lane
-					: {
-							...lane,
-							cells: lane.cells.map((cell, ci) =>
-								cellIndex !== ci ? cell : { ...cell, active },
-							),
-					  },
-			),
+			modifyLaneCell(lanes, laneIndex, cellIndex, active),
 		);
 	}
 };
+
+export function modifyLaneCell(lanes: ILaneData[], laneIndex: number, cellIndex: number, active: boolean): ILaneData[] {
+	return lanes.map((lane, li) => laneIndex !== li
+		? lane
+		: {
+			...lane,
+			cells: lane.cells.map((cell, ci) => cellIndex !== ci ? cell : { ...cell, active }),
+		});
+}
+
+export function makeDefaultLanes(stepRange: IRange<DiatonicStep>) {
+	return fillRange(stepRange).map(() => ({
+		gridTree: tree44,
+		cells: getRhythmPoints(tree44).map(() => ({
+			active: false,
+		})),
+	}));
+}
 
 function getLanePercentageHeights(props: IDiatonicPianoRollProps): number[] {
 	const heightRatios = fillRange(props.stepRange).map(
@@ -97,6 +99,7 @@ function getLanePercentageHeights(props: IDiatonicPianoRollProps): number[] {
 const defaultStepRange = { min: 0, max: 14 };
 
 DiatonicPianoRoll.defaultProps = {
+	initialLanes: makeDefaultLanes(defaultStepRange),
 	stepRange: defaultStepRange,
 	zeroPitch: 48,
 	mode: 'Ionian',

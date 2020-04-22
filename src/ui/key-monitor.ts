@@ -14,12 +14,12 @@ function emitTransition(key: string, newState: 'Down' | 'Up') {
 
 // TODO deal with left and right keys (shift, option, command)
 
-window.addEventListener('keydown', (ev: KeyboardEvent) => {
+typeof window !== 'undefined' && window.addEventListener('keydown', (ev: KeyboardEvent) => {
     keysPressed[ev.key] = true
     emitTransition(ev.key, 'Down')
 })
 
-window.addEventListener('keyup', (ev: KeyboardEvent) => {
+typeof window !== 'undefined' && window.addEventListener('keyup', (ev: KeyboardEvent) => {
     keysPressed[ev.key] = false
     emitTransition(ev.key, 'Up')
 })
