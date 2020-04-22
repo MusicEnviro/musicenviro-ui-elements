@@ -31,6 +31,8 @@ export interface IDiatonicPianoRollProps {
 	onCellChange?: (lane: number, cell: number, active: boolean) => void;
 }
 
+export { ILaneData, ICellData } from './@types'
+
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
 	const [lanes, setLanes] = React.useState<ILaneData[]>(makeDefaultLanes());
 
