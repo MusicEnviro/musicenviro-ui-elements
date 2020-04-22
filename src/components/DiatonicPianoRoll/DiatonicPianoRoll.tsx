@@ -35,7 +35,7 @@ export interface IDiatonicPianoRollProps {
 export { ILaneData, ICellData } from './@types'
 
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
-	// const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes)
+	const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes)
 
 	return (
 		<Roll className="diatonic-piano-roll" style={{ height: props.height, width: props.width }}>
