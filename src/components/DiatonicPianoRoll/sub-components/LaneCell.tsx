@@ -3,7 +3,7 @@ import { cellPadding, stepTypeAppearance } from '../config';
 import styled from 'styled-components';
 import { DiatonicStepType } from '@musicenviro/base';
 
-import './paletton.css'
+// import './paletton.css'
 
 const Cell = styled.div`
 	box-sizing: border-box;
@@ -42,7 +42,7 @@ export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
 					depthSuffix[props.depth]
                 }`}
                 
-				style={{ opacity: props.activated ? 1 : 0.25 }}
+				style={{ opacity: showActivated ? 1 : 0.25 }}
                 
                 onMouseDown={e => {
 					if (!props.activated) {

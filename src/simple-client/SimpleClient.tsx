@@ -40,7 +40,8 @@ export function SimpleClient() {
 			case 'MultiNoteLanes':
 				return <MultiNoteLanes />;
 			default:
-				return <DiatonicPianoRollExample/>;
+				return <DiatonicPianoRollExample
+				/>;
 		}
 	}
 
