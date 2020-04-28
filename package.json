@@ -1,6 +1,6 @@
 {
 	"name": "@musicenviro/ui-elements",
-	"version": "0.4.19",
+	"version": "0.4.20",
 	"description": "music-related UI elements",
 	"main": "lib/index.js",
 	"scripts": {
