@@ -33,6 +33,7 @@ const depthSuffix = [3, 3, 0, 2];
 
 export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
 	const [justCreated, setJustCreated] = React.useState<boolean>(false);
+	const [showActivated, setShowActivated] = React.useState<boolean>(props.activated);
 
 	return (
 		<Cell>
@@ -45,20 +46,21 @@ export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
                 
                 onMouseDown={e => {
 					if (!props.activated) {
-						setJustCreated(true);
-						props.onChange(true);
+						// setJustCreated(true);
+						setShowActivated(true)
 					}
 				}}
                 
                 onMouseUp={e => {
-					if (!justCreated && props.activated) {
+					if (props.activated) {
 						props.onChange(false);
 					} else {
-						setJustCreated(false);
+						props.onChange(true);
+						// setJustCreated(false);
 					}
                 }}
                 
-				draggable={props.activated}
+				draggable={showActivated}
 			></CellContents>
 		</Cell>
 	);
