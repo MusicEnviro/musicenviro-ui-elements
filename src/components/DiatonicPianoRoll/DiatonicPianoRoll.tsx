@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { RollLane } from './sub-components/RollLane';
 import { lanePadding, stepTypeAppearance } from './config';
 import { IRhythmTree, tree44, getRhythmPoints } from '../SingleNoteLane/trees';
-import { ILaneData } from './@types'
+import { ILaneData } from './@types';
 
 const Roll = styled.div`
 	background-color: #fff;
@@ -32,52 +32,82 @@ export interface IDiatonicPianoRollProps {
 	onCellChange?: (lane: number, cell: number, active: boolean) => void;
 }
 
-export { ILaneData, ICellData } from './@types'
+export { ILaneData, ICellData } from './@types';
+export const MouseContext = React.createContext(false);
 
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
-	const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes)
+	const roll = React.useRef<HTMLDivElement>();
+
+	const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes);
+	const [mouseDown, setMouseDown] = React.useState<boolean>(false);
+
+	React.useEffect(() => {
+		const handleMouseDown = () => setMouseDown(true);
+		const handleMouseUp = () => setMouseDown(false);
+		roll.current.addEventListener('mousedown', handleMouseDown);
+		roll.current.addEventListener('mouseup', handleMouseUp);
+
+		return () => {
+			roll.current.removeEventListener('mousedown', handleMouseDown);
+			roll.current.removeEventListener('mouseup', handleMouseUp);
+		};
+	}, []);
 
 	return (
-		<Roll className="diatonic-piano-roll" style={{ height: props.height, width: props.width }}>
-			{getLanePercentageHeights(props)
-				.map((height, laneIndex) => (
-					<RollLane
-						stepType={stepType(props.stepRange.min + laneIndex)}
-						key={'lane' + laneIndex}
-						height={height + '%'}
-						laneData={props.initialLanes[laneIndex]}
-						onCellChange={(cellIndex, active) => {
-							if (props.onCellChange) {
-								props.onCellChange(laneIndex, cellIndex, active)
-							} else {
-								setCell(laneIndex, cellIndex, active)
-							}
-						}}
-					/>
-				))
-				.reverse()}
-		</Roll>
+		<MouseContext.Provider value={mouseDown}>
+			<Roll
+				ref={roll}
+				className="diatonic-piano-roll"
+				style={{ height: props.height, width: props.width }}
+			>
+				{getLanePercentageHeights(props)
+					.map((height, laneIndex) => (
+						<RollLane
+							stepType={stepType(props.stepRange.min + laneIndex)}
+							key={'lane' + laneIndex}
+							height={height + '%'}
+							laneData={lanes[laneIndex]}
+							onCellChange={(cellIndex, active) => {
+								if (props.onCellChange) {
+									props.onCellChange(laneIndex, cellIndex, active);
+								}
+
+								// had an else statement here ... to avoid duplication
+
+								setCell(laneIndex, cellIndex, active);
+							}}
+						/>
+					))
+					.reverse()}
+			</Roll>
+		</MouseContext.Provider>
 	);
 
 	// ----------------------------------------------------------------------------
 	// function scope helpers
 	// ----------------------------------------------------------------------------
 
-
 	function setCell(laneIndex: number, cellIndex: number, active: boolean) {
-		setLanes(
-			modifyLaneCell(lanes, laneIndex, cellIndex, active),
-		);
+		setLanes(modifyLaneCell(lanes, laneIndex, cellIndex, active));
 	}
 };
 
-export function modifyLaneCell(lanes: ILaneData[], laneIndex: number, cellIndex: number, active: boolean): ILaneData[] {
-	return lanes.map((lane, li) => laneIndex !== li
-		? lane
-		: {
-			...lane,
-			cells: lane.cells.map((cell, ci) => cellIndex !== ci ? cell : { ...cell, active }),
-		});
+export function modifyLaneCell(
+	lanes: ILaneData[],
+	laneIndex: number,
+	cellIndex: number,
+	active: boolean,
+): ILaneData[] {
+	return lanes.map((lane, li) =>
+		laneIndex !== li
+			? lane
+			: {
+					...lane,
+					cells: lane.cells.map((cell, ci) =>
+						cellIndex !== ci ? cell : { ...cell, active },
+					),
+			  },
+	);
 }
 
 export function makeDefaultLanes(stepRange: IRange<DiatonicStep>) {
