@@ -7,7 +7,7 @@
 		"start": "ts-node src/index.ts",
 		"view": "open ./simple-client/index.html",
 		"watch": "watchify lib/simple-client/index.js -o simple-client/bundle.js",
-		"build": "sh ./css-copy.sh && tsc"
+		"build": "rm -rf lib && tsc && sh ./css-copy.sh"
 	},
 	"author": "Geof Holbrook",
 	"license": "ISC",
