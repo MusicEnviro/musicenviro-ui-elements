@@ -42,8 +42,16 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 	const [mouseDown, setMouseDown] = React.useState<boolean>(false);
 
 	React.useEffect(() => {
-		const handleMouseDown = () => setMouseDown(true);
-		const handleMouseUp = () => setMouseDown(false);
+		const handleMouseDown = (e: MouseEvent) => {
+			setMouseDown(true);
+			e.preventDefault();
+		};
+
+		const handleMouseUp = (e: MouseEvent) => {
+			setMouseDown(false);
+			e.preventDefault();
+		};
+
 		roll.current.addEventListener('mousedown', handleMouseDown);
 		roll.current.addEventListener('mouseup', handleMouseUp);
 
