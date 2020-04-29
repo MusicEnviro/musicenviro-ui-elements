@@ -33,13 +33,32 @@ export interface IDiatonicPianoRollProps {
 }
 
 export { ILaneData, ICellData } from './@types';
-export const MouseContext = React.createContext(false);
+
+export const RollContext = React.createContext<{
+	mouseDown: boolean;
+	dragging: boolean;
+	setDragOrigin: (value: { laneIndex: number; cellIndex: number }) => void;
+	endDrag: (laneIndex: number, cellIndex: number) => void;
+} | null>(null);
 
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
 	const roll = React.useRef<HTMLDivElement>();
 
 	const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes);
+
 	const [mouseDown, setMouseDown] = React.useState<boolean>(false);
+	const [dragOrigin, setDragOrigin] = React.useState<{ laneIndex: number; cellIndex: number }>(
+		null,
+	);
+
+	function endDrag(laneIndex: number, cellIndex: number) {
+		const noChange = laneIndex === dragOrigin.laneIndex && cellIndex === dragOrigin.cellIndex;
+		if (!noChange) {
+			props.onCellChange(dragOrigin.laneIndex, dragOrigin.cellIndex, false)
+			props.onCellChange(laneIndex, cellIndex, true)
+		}
+		setDragOrigin(null)
+	}
 
 	React.useEffect(() => {
 		const handleMouseDown = (e: MouseEvent) => {
@@ -62,7 +81,7 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 	}, []);
 
 	return (
-		<MouseContext.Provider value={mouseDown}>
+		<RollContext.Provider value={{ mouseDown, dragging: !!dragOrigin, setDragOrigin, endDrag }}>
 			<Roll
 				ref={roll}
 				className="diatonic-piano-roll"
@@ -71,6 +90,7 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 				{getLanePercentageHeights(props)
 					.map((height, laneIndex) => (
 						<RollLane
+							laneIndex={laneIndex}
 							stepType={stepType(props.stepRange.min + laneIndex)}
 							key={'lane' + laneIndex}
 							height={height + '%'}
@@ -81,23 +101,14 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 								}
 
 								// had an else statement here ... to avoid duplication
-
-								setCell(laneIndex, cellIndex, active);
+								setLanes(modifyLaneCell(lanes, laneIndex, cellIndex, active));
 							}}
 						/>
 					))
 					.reverse()}
 			</Roll>
-		</MouseContext.Provider>
+		</RollContext.Provider>
 	);
-
-	// ----------------------------------------------------------------------------
-	// function scope helpers
-	// ----------------------------------------------------------------------------
-
-	function setCell(laneIndex: number, cellIndex: number, active: boolean) {
-		setLanes(modifyLaneCell(lanes, laneIndex, cellIndex, active));
-	}
 };
 
 export function modifyLaneCell(

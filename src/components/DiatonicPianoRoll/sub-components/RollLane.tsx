@@ -20,6 +20,7 @@ const LaneContents = styled.div`
 `;
 
 interface IRollLaneProps {
+	laneIndex: number;
 	height?: string;
 	stepType?: DiatonicStepType;
     laneData: ILaneData;
@@ -34,6 +35,8 @@ export const RollLane: React.FunctionComponent<IRollLaneProps> = props => {
 			>
 				{getRhythmPoints(props.laneData.gridTree).map((rp, i) => (
 					<LaneCell
+						laneIndex={props.laneIndex}
+						cellIndex={i}
 						key={'cell' + i}
 						depth={rp.depth}
                         stepType={props.stepType}

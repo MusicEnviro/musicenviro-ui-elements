@@ -3,8 +3,8 @@ import { cellPadding, stepTypeAppearance } from '../config';
 import styled from 'styled-components';
 import { DiatonicStepType } from '@musicenviro/base';
 
-import './paletton.css'
-import { MouseContext } from '../DiatonicPianoRoll';
+import './paletton.css';
+import { RollContext } from '../DiatonicPianoRoll';
 
 const Cell = styled.div`
 	box-sizing: border-box;
@@ -24,7 +24,9 @@ const CellContents = styled.div`
 `;
 
 interface ILaneCellProps {
-	depth: number;
+	laneIndex: number;
+	cellIndex: number;
+	depth: number; // depth in rhythm tree
 	stepType: DiatonicStepType;
 	activated: boolean;
 	onChange: (active: boolean) => void;
@@ -33,58 +35,57 @@ interface ILaneCellProps {
 const depthSuffix = [3, 3, 0, 2];
 
 export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
-
 	const [clickedHere, setClickedHere] = React.useState<boolean>(false);
 	const [justCreated, setJustCreated] = React.useState<boolean>(false);
 	const [showActivated, setShowActivated] = React.useState<boolean>(props.activated);
 
-	const mouseDown = React.useContext(MouseContext)
+	const { mouseDown, dragging, setDragOrigin, endDrag } = React.useContext(RollContext);
 
 	return (
 		<Cell>
 			<CellContents
 				className={`color-${stepTypeAppearance[props.stepType].classStem}-${
 					depthSuffix[props.depth]
-                }`}
-                
+				}`}
 				style={{ opacity: showActivated ? 1 : 0.25 }}
-                
-                onMouseDown={e => {
-					setClickedHere(true)
+				onMouseDown={e => {
+					setClickedHere(true);
 					if (!props.activated) {
 						// setJustCreated(true);
-						setShowActivated(true)
+						setShowActivated(true);
 					}
 				}}
 
 				onMouseEnter={e => {
 					if (mouseDown) {
-						setShowActivated(true)
+						setShowActivated(true);
 					}
 				}}
-                
-                onMouseUp={e => {
+
+				onMouseUp={e => {
 					setClickedHere(false);
-					if (props.activated) {
-						setShowActivated(false);
-						props.onChange(false);
+					if (dragging) {
+						endDrag(props.laneIndex, props.cellIndex)
 					} else {
-						props.onChange(true);
-						// setJustCreated(false);
+						if (props.activated) {
+							setShowActivated(false);
+							props.onChange(false);
+						} else {
+							props.onChange(true);
+							// setJustCreated(false);
+						}
 					}
 				}}
-				
+
 				onMouseLeave={e => {
 					if (showActivated && !props.activated) setShowActivated(false);
 					if (props.activated && clickedHere) {
 						setShowActivated(false);
-						props.onChange(false);
+						setDragOrigin({ laneIndex: props.laneIndex, cellIndex: props.cellIndex });
 					}
 				}}
-                
+
 				// draggable={showActivated}
-
-
 			></CellContents>
 		</Cell>
 	);
