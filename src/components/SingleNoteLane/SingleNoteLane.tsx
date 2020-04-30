@@ -13,7 +13,7 @@ import * as React from 'react';
 import { rectCenter } from '@musicenviro/base';
 import { CanvasMouseManager, MouseArea } from '../../ui/CanvasMouseManager/CanvasMouseManager';
 import { propToAbs, absToProp } from '../../graphics/canvas-drawing/convert';
-import { keysPressed, onTransition } from '../../ui/key-monitor';
+import * as KeyMonitor from '../../ui/key-monitor';
 import { ISingleNoteLaneProps } from './@types';
 
 // =============================================================================
@@ -38,13 +38,13 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		onChange: () => { console.log('change') }
 	} as ISingleNoteLaneProps;
 	
+	keyMonitorCallback: KeyMonitor.Callback;
+
 	gridTree: IRhythmTree;
 
 	gridTreePoints: Array<ITreePoint & { area?: MouseArea }>;
 
 	mouseManager = new CanvasMouseManager();
-
-	notes: number[] = [];
 
 	constructor(props: ISingleNoteLaneProps) {
 		super(props);
@@ -63,7 +63,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 			drawCircle(ctx, rectCenter(area.rect), hoverAreaRadius, 'gray', false, [3, 3]);
 		});
 
-		this.notes.forEach(pos => {
+		this.props.notes.forEach(pos => {
 			drawCircleP(
 				ctx,
 				{ padding, fixedRadius: true },
@@ -99,25 +99,34 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 
 	componentDidMount() {
 		super.componentDidMount();
+
 		this.mouseManager.initialize(this.ref.current);
 		this.addAreas();
 		this.setupKeyEvents();
-		this.notes = this.props.notes.slice()
+		
 	}
 	
 	componentDidUpdate() {
-		this.notes = this.props.notes.slice()
 		this.redraw(true)
 	}
 
+	componentWillUnmount() {
+		this.disposeKeyEvents()
+	}
+
 	private setupKeyEvents() {
-		onTransition((key, newState) => {
+		this.keyMonitorCallback = (key, newState) => {
 			switch (key) {
 				case 'Shift':
 					this.updateHighlights();
 					break;
 			}
-		});
+		}
+		KeyMonitor.onTransition(this.keyMonitorCallback);
+	}
+
+	private disposeKeyEvents() {
+		KeyMonitor.removeListener(this.keyMonitorCallback)
 	}
 
 	addAreas() {
@@ -153,7 +162,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		this.highlights.clear();
 		const hoverPoint = this.getHoverPoint();
 		if (hoverPoint) {
-			if (keysPressed.Shift) {
+			if (KeyMonitor.keysPressed.Shift) {
 				this.multiplyPoint(hoverPoint).forEach(point => this.addHighlight(point.area));
 			} else {
 				this.highlights.add(hoverPoint.area);
@@ -168,17 +177,17 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	}
 
 	toggleNote(pos: number) {
-		const index = this.notes.indexOf(pos);
+		const index = this.props.notes.indexOf(pos);
 		let newNotes
 
 		if (index === -1) {
-			newNotes = [...this.notes, ...[...this.highlights].map(area => area.id * 0.0625)]
+			newNotes = [...this.props.notes, ...[...this.highlights].map(area => area.id * 0.0625)]
 		} else {
-			newNotes = this.notes.filter(pos => ![...this.highlights].map(area => area.id * 0.0625).includes(pos));
+			newNotes = this.props.notes.filter(pos => ![...this.highlights].map(area => area.id * 0.0625).includes(pos));
 		}
 
 		this.props.onChange(newNotes)
-		this.notes = newNotes
+		// this.props.notes = newNotes
 		// this.props.onChange([...this.notes, pos])
 		// this.redraw();
 	}
