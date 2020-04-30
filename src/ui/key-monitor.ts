@@ -20,8 +20,6 @@ function emitTransition(key: string, newState: 'Down' | 'Up') {
 
 // TODO deal with left and right keys (shift, option, command)
 
-console.log('ADDING KEYSTROKE LISTENERS to window (never get removed)')
-
 typeof window !== 'undefined' && window.addEventListener('keydown', (ev: KeyboardEvent) => {
     keysPressed[ev.key] = true
     emitTransition(ev.key, 'Down')
