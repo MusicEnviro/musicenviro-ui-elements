@@ -44,7 +44,7 @@ export const RollContext = React.createContext<{
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
 	const roll = React.useRef<HTMLDivElement>();
 
-	const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes);
+	// const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes);
 
 	const [mouseDown, setMouseDown] = React.useState<boolean>(false);
 	const [dragOrigin, setDragOrigin] = React.useState<{ laneIndex: number; cellIndex: number }>(
@@ -94,14 +94,14 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 							stepType={stepType(props.stepRange.min + laneIndex)}
 							key={'lane' + laneIndex}
 							height={height + '%'}
-							laneData={lanes[laneIndex]}
+							laneData={props.initialLanes[laneIndex]}
 							onCellChange={(cellIndex, active) => {
 								if (props.onCellChange) {
 									props.onCellChange(laneIndex, cellIndex, active);
 								}
 
 								// had an else statement here ... to avoid duplication
-								setLanes(modifyLaneCell(lanes, laneIndex, cellIndex, active));
+								// setLanes(modifyLaneCell(lanes, laneIndex, cellIndex, active));
 							}}
 						/>
 					))
