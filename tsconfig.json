@@ -12,6 +12,7 @@
 		"rootDir": "./src",
 		"jsx": "react",
 		"downlevelIteration": true,
+		"esModuleInterop": true,
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules"]
