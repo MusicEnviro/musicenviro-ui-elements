@@ -3,7 +3,7 @@ import { cellPadding, stepTypeAppearance } from '../config';
 import styled from 'styled-components';
 import { DiatonicStepType } from '@musicenviro/base';
 
-import './paletton.css';
+import { paletton } from './paletton';
 import { RollContext } from '../DiatonicPianoRoll';
 
 const Cell = styled.div`
@@ -39,35 +39,38 @@ export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
 	const [showActivated, setShowActivated] = React.useState<boolean>(props.activated);
 
 	React.useEffect(() => {
-		setShowActivated(props.activated)
-	}, [props.activated])
+		setShowActivated(props.activated);
+	}, [props.activated]);
 
 	const { mouseDown, dragging, setDragOrigin, endDrag } = React.useContext(RollContext);
 
 	return (
 		<Cell>
 			<CellContents
-				className={`color-${stepTypeAppearance[props.stepType].classStem}-${
-					depthSuffix[props.depth]
-				}`}
-				style={{ opacity: showActivated ? 1 : 0.25 }}
+				style={{
+					opacity: showActivated ? 1 : 0.25,
+					backgroundColor:
+						paletton[
+							`color_${stepTypeAppearance[props.stepType].classStem}_${
+								depthSuffix[props.depth]
+							}`
+						],
+				}}
 				onMouseDown={e => {
 					setClickedHere(true);
 					if (!props.activated) {
 						setShowActivated(true);
 					}
 				}}
-
 				onMouseEnter={e => {
 					if (mouseDown) {
 						setShowActivated(true);
 					}
 				}}
-
 				onMouseUp={e => {
 					setClickedHere(false);
 					if (dragging) {
-						endDrag(props.laneIndex, props.cellIndex)
+						endDrag(props.laneIndex, props.cellIndex);
 					} else {
 						if (props.activated) {
 							setShowActivated(false);
@@ -77,7 +80,6 @@ export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
 						}
 					}
 				}}
-
 				onMouseLeave={e => {
 					if (showActivated && !props.activated) setShowActivated(false);
 					if (props.activated && clickedHere) {

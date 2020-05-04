@@ -42,11 +42,12 @@ export function SimpleClient() {
 				return <SingleNoteLane />;
 			case 'MultiNoteLanes':
 				return <MultiNoteLanes />;
+			case 'DiatonicPianoRoll':
+				return <DiatonicPianoRollExample />
 			case 'VolumeKnob':
 				return <VolumeKnob size={30}/>;
 			default:
-				return <DiatonicPianoRollExample
-				/>;
+				return <div>not implemented</div>;
 		}
 	}
 
