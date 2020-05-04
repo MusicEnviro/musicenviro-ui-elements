@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import { DiatonicStepType } from '@musicenviro/base';
 
 import { paletton } from './paletton';
+// import { RollContext } from '../DiatonicPianoRoll';
+
+import * as MouseMonitor from '../../../ui/mouse-monitor'
 import { RollContext } from '../DiatonicPianoRoll';
 
 const Cell = styled.div`
@@ -40,15 +43,16 @@ export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
 
 	React.useEffect(() => {
 		setShowActivated(props.activated);
+		setClickedHere(false)
 	}, [props.activated]);
 
-	const { mouseDown, dragging, setDragOrigin, endDrag } = React.useContext(RollContext);
+	const setDragOrigin = React.useContext(RollContext);
 
 	return (
 		<Cell>
 			<CellContents
 				style={{
-					opacity: showActivated ? 1 : 0.25,
+					opacity: (showActivated ? 0.5 : 0.125) + (props.activated ? 0.5 : 0.125),
 					backgroundColor:
 						paletton[
 							`color_${stepTypeAppearance[props.stepType].classStem}_${
@@ -61,30 +65,37 @@ export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
 					if (!props.activated) {
 						setShowActivated(true);
 					}
+
 				}}
+
 				onMouseEnter={e => {
-					if (mouseDown) {
+					if (MouseMonitor.mouseDown) {
 						setShowActivated(true);
+						if (clickedHere) setDragOrigin(null)
 					}
 				}}
+				
 				onMouseUp={e => {
 					setClickedHere(false);
-					if (dragging) {
-						endDrag(props.laneIndex, props.cellIndex);
-					} else {
+					// if (dragging) {
+					// 	endDrag(props.laneIndex, props.cellIndex);
+					// } else {
 						if (props.activated) {
 							setShowActivated(false);
 							props.onChange(false);
 						} else {
+							setShowActivated(true);
 							props.onChange(true);
 						}
-					}
+					// }
 				}}
+
 				onMouseLeave={e => {
 					if (showActivated && !props.activated) setShowActivated(false);
 					if (props.activated && clickedHere) {
 						setShowActivated(false);
-						setDragOrigin({ laneIndex: props.laneIndex, cellIndex: props.cellIndex });
+						setDragOrigin({laneIndex: props.laneIndex, cellIndex: props.cellIndex})
+						// listenForWindowMouseup()
 					}
 				}}
 

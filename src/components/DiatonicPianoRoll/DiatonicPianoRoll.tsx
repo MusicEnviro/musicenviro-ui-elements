@@ -34,60 +34,30 @@ export interface IDiatonicPianoRollProps {
 
 export { ILaneData, ICellData } from './@types';
 
-export const RollContext = React.createContext<{
-	mouseDown: boolean;
-	dragging: boolean;
-	setDragOrigin: (value: { laneIndex: number; cellIndex: number }) => void;
-	endDrag: (laneIndex: number, cellIndex: number) => void;
-} | null>(null);
+// export const RollContext = React.createContext<{
+// mouseDown: boolean;
+// dragging: boolean;
+// setDragOrigin: (value: { laneIndex: number; cellIndex: number }) => void;
+// 	endDrag: (laneIndex: number, cellIndex: number) => void;
+// } | null>(null);
+
+export const RollContext = React.createContext<
+	(value: { laneIndex: number; cellIndex: number }) => void
+>(null);
 
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = props => {
-	const roll = React.useRef<HTMLDivElement>();
-
 	const [lanes, setLanes] = React.useState<ILaneData[]>(props.initialLanes);
-
-	React.useEffect(() => {
-		setLanes(props.initialLanes)
-	}, [props.initialLanes])
-
-	const [mouseDown, setMouseDown] = React.useState<boolean>(false);
 	const [dragOrigin, setDragOrigin] = React.useState<{ laneIndex: number; cellIndex: number }>(
 		null,
 	);
 
-	function endDrag(laneIndex: number, cellIndex: number) {
-		const noChange = laneIndex === dragOrigin.laneIndex && cellIndex === dragOrigin.cellIndex;
-		if (!noChange) {
-			props.onCellChange(dragOrigin.laneIndex, dragOrigin.cellIndex, false)
-			props.onCellChange(laneIndex, cellIndex, true)
-		}
-		setDragOrigin(null)
-	}
-
 	React.useEffect(() => {
-		const handleMouseDown = (e: MouseEvent) => {
-			setMouseDown(true);
-			e.preventDefault();
-		};
-
-		const handleMouseUp = (e: MouseEvent) => {
-			setMouseDown(false);
-			e.preventDefault();
-		};
-
-		roll.current.addEventListener('mousedown', handleMouseDown);
-		roll.current.addEventListener('mouseup', handleMouseUp);
-
-		return () => {
-			roll.current.removeEventListener('mousedown', handleMouseDown);
-			roll.current.removeEventListener('mouseup', handleMouseUp);
-		};
-	}, []);
+		console.log({dragOrigin})
+	}, [dragOrigin])
 
 	return (
-		<RollContext.Provider value={{ mouseDown, dragging: !!dragOrigin, setDragOrigin, endDrag }}>
+		<RollContext.Provider value={setDragOrigin}>
 			<Roll
-				ref={roll}
 				className="diatonic-piano-roll"
 				style={{ height: props.height, width: props.width }}
 			>
@@ -105,7 +75,22 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 								}
 
 								// had an else statement here ... to avoid duplication
-								setLanes(modifyLaneCell(lanes, laneIndex, cellIndex, active));
+								let newLanes = modifyLaneCell(lanes, laneIndex, cellIndex, active);
+								if (dragOrigin) {
+									if (!active) {
+										// shoudln't happen?
+										console.log("active = false! shouldn't happen...");
+									}
+									newLanes = modifyLaneCell(
+										newLanes,
+										dragOrigin.laneIndex,
+										dragOrigin.cellIndex,
+										false,
+									);
+									setDragOrigin(null)
+								}
+
+								setLanes(newLanes);
 							}}
 						/>
 					))

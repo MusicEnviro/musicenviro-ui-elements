@@ -23,12 +23,16 @@ interface IRollLaneProps {
 	laneIndex: number;
 	height?: string;
 	stepType?: DiatonicStepType;
-    laneData: ILaneData;
-    onCellChange?: (cellIndex: number, active: boolean) => void   
+	laneData: ILaneData;
+	onCellChange?: (cellIndex: number, active: boolean) => void;
 }
 
 export const RollLane: React.FunctionComponent<IRollLaneProps> = props => {
-    return (
+	React.useEffect(() => {
+		// console.log(props.laneData.cells.map(c => c.active));
+	}, [props.laneData]);
+
+	return (
 		<Lane style={{ height: props.height }}>
 			<LaneContents
 			// className={`color-${stepTypeAppearance[props.stepType].classStem}-1`}
@@ -39,20 +43,21 @@ export const RollLane: React.FunctionComponent<IRollLaneProps> = props => {
 						cellIndex={i}
 						key={'cell' + i}
 						depth={rp.depth}
-                        stepType={props.stepType}
-                        activated={props.laneData.cells[i].active}
-                        onChange={active => props.onCellChange(i, active)}
+						stepType={props.stepType}
+						activated={props.laneData.cells[i].active}
+						onChange={(active) => props.onCellChange(i, active)}
 					></LaneCell>
 				))}
 			</LaneContents>
 		</Lane>
 	);
 };
+
 RollLane.defaultProps = {
 	height: '50px',
 	stepType: 'Root',
-    laneData: {
-        gridTree: tree44,
-        cells: getRhythmPoints(tree44).map(() => ({active: false}))
-    }
+	laneData: {
+		gridTree: tree44,
+		cells: getRhythmPoints(tree44).map(() => ({ active: false })),
+	},
 };

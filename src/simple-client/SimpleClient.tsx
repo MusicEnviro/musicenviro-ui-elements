@@ -28,7 +28,7 @@ const uiElements = [
 ];
 
 export function SimpleClient() {
-	const [element, setElement] = React.useState<UIElement>('VolumeKnob');
+	const [element, setElement] = React.useState<UIElement>('DiatonicPianoRoll');
 
 	function getUIElement() {
 		switch (element) {
