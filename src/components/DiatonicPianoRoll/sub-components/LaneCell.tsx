@@ -3,7 +3,7 @@ import { cellPadding, stepTypeAppearance } from '../config';
 import styled from 'styled-components';
 import { DiatonicStepType } from '@musicenviro/base';
 
-// import './paletton.css';
+import './paletton.css';
 import { RollContext } from '../DiatonicPianoRoll';
 
 const Cell = styled.div`
