@@ -12,14 +12,19 @@ const radiansEnd = Math.PI * 2.25;
 const yCenterAdjustProportion = 0.04;
 
 export interface IVolumeKnobProps {
+	initialDb?: number;
+	onChange?: (db: number) => void;
+
 	indicatorColor?: string;
-    backgroundColor?: string;
-    size?: Pixels;
+	backgroundColor?: string;
+	size?: Pixels;
 }
 
 export const VolumeKnob: FunctionComponent<IVolumeKnobProps> = props => {
 	const canvasRef = useRef<HTMLCanvasElement>();
-	const [db, setDb] = useState<number>(0);
+	const [db, setDb] = useState<number>(props.initialDb | 0);
+
+	useEffect(() => setDb(props.initialDb), [props.initialDb])
 
 	function handleMouseDown(e: React.MouseEvent) {
 		let y = e.clientY;
@@ -29,9 +34,14 @@ export const VolumeKnob: FunctionComponent<IVolumeKnobProps> = props => {
 		window.addEventListener('mousemove', handleWindowMouseMove);
 
 		function handleWindowMouseMove(e: MouseEvent) {
-			setDb(
-				Math.floor(_.clamp(originalDb - (e.clientY - y) * 0.4, dbRange.min, dbRange.max)),
+			const newDb = Math.floor(
+				_.clamp(originalDb - (e.clientY - y) * 0.4, dbRange.min, dbRange.max),
 			);
+
+			if (db !== newDb) {
+				setDb(newDb);
+				props.onChange(newDb);
+			}
 		}
 
 		function handleWindowMouseUp() {
@@ -55,7 +65,11 @@ export const VolumeKnob: FunctionComponent<IVolumeKnobProps> = props => {
 		drawArc(1, 'black', ctx.canvas.width / 6);
 
 		// draw indicator
-		drawArc((db - dbRange.min) / (dbRange.max - dbRange.min), props.indicatorColor, ctx.canvas.width / 8);
+		drawArc(
+			(db - dbRange.min) / (dbRange.max - dbRange.min),
+			props.indicatorColor,
+			ctx.canvas.width / 8,
+		);
 
 		function drawArc(ratioFilled: number, color: string, lineWidth: number) {
 			ctx.beginPath();
@@ -71,12 +85,12 @@ export const VolumeKnob: FunctionComponent<IVolumeKnobProps> = props => {
 	}, [db]);
 
 	return (
-		<div>
+		<div className="volume-knob" style={{ width: props.size, height: props.size }}>
 			<canvas
 				ref={canvasRef}
 				width={props.size}
 				height={props.size}
-				style={{ backgroundColor: props.backgroundColor, border: 'solid 1px' }}
+				style={{ backgroundColor: props.backgroundColor, borderRadius: 3 }}
 				onMouseDown={handleMouseDown}
 			></canvas>
 		</div>
@@ -84,7 +98,7 @@ export const VolumeKnob: FunctionComponent<IVolumeKnobProps> = props => {
 };
 
 VolumeKnob.defaultProps = {
-	backgroundColor: '#ccc',
-    indicatorColor: 'orange',
-    size: 50
+	backgroundColor: '#ddd',
+	indicatorColor: 'orange',
+	size: 50,
 };

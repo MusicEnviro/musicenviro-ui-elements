@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { cellPadding, stepTypeAppearance } from '../config';
 import styled from 'styled-components';
-import { DiatonicStepType, useWatch } from '@musicenviro/base';
+import { DiatonicStepType, useWatch, MouseMonitor } from '@musicenviro/base';
 
 import { paletton } from './paletton';
-// import { RollContext } from '../DiatonicPianoRoll';
 
-import * as MouseMonitor from '../../../ui/mouse-monitor'
 import { RollContext } from '../DiatonicPianoRoll';
 
 const Cell = styled.div`

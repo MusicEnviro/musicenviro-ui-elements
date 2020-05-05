@@ -10,10 +10,9 @@ import { drawLineP } from '../../graphics/canvas-drawing/drawLine';
 import { drawCircleP, drawCircle } from '../../graphics/canvas-drawing/drawCircle';
 import { IRhythmTree, ITreePoint, getRhythmPoints, tree44 } from './trees';
 import * as React from 'react';
-import { rectCenter } from '@musicenviro/base';
+import { rectCenter, KeyMonitor } from '@musicenviro/base';
 import { CanvasMouseManager, MouseArea } from '../../ui/CanvasMouseManager/CanvasMouseManager';
 import { propToAbs, absToProp } from '../../graphics/canvas-drawing/convert';
-import * as KeyMonitor from '../../ui/key-monitor';
 import { ISingleNoteLaneProps } from './@types';
 
 // =============================================================================
