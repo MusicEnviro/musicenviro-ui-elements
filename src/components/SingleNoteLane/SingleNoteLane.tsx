@@ -100,6 +100,8 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	componentDidMount() {
 		super.componentDidMount();
 
+		// console.log('SingleNoteLane MOUNTING')
+		
 		this.mouseManager.initialize(this.ref.current);
 		this.addAreas();
 		this.setupKeyEvents();
@@ -107,6 +109,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	}
 	
 	componentDidUpdate() {
+		// console.log('SingleNoteLane UPDATING')
 		this.redraw(true)
 	}
 

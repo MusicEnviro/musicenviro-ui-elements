@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Pixels, DiatonicStepType } from '@musicenviro/base';
+import { Pixels, DiatonicStepType, useWatch } from '@musicenviro/base';
 import styled from 'styled-components';
 import { lanePadding, stepTypeAppearance, cellPadding } from '../config';
 import { IRhythmTree, tree44, getRhythmPoints } from '../../SingleNoteLane/trees';
@@ -30,7 +30,11 @@ interface IRollLaneProps {
 export const RollLane: React.FunctionComponent<IRollLaneProps> = props => {
 	React.useEffect(() => {
 		// console.log(props.laneData.cells.map(c => c.active));
-	}, [props.laneData]);
+	}, [props.laneData]);	
+
+	useWatch(props, 'RollLane')
+
+
 
 	return (
 		<Lane style={{ height: props.height }}>

@@ -8,12 +8,12 @@ export let clientMousePosition: IPoint = null;
 
 window.addEventListener('mousedown', handleMouseDown);
 window.addEventListener('mouseup', handleMouseUp);
-window.addEventListener('mousemove', handleMouseMove);
+// window.addEventListener('mousemove', handleMouseMove);
 
 export function dispose() {
 	window.removeEventListener('mousedown', handleMouseDown);
 	window.removeEventListener('mouseup', handleMouseUp);
-	window.removeEventListener('mousemove', handleMouseMove);
+	// window.removeEventListener('mousemove', handleMouseMove);
 }
 
 function handleMouseDown() {

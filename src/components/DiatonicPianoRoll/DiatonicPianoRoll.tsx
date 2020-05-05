@@ -8,12 +8,13 @@ import {
 	stepType,
 	fillRange,
 	scaleToSum,
+	useWatch
 } from '@musicenviro/base';
 
 import styled from 'styled-components';
 import { RollLane } from './sub-components/RollLane';
 import { lanePadding, stepTypeAppearance } from './config';
-import { IRhythmTree, tree44, getRhythmPoints } from '../SingleNoteLane/trees';
+import { tree44, getRhythmPoints } from '../SingleNoteLane/trees';
 import { ILaneData } from './@types';
 
 const Roll = styled.div`
@@ -51,9 +52,11 @@ export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps>
 		null,
 	);
 
-	React.useEffect(() => {
-		console.log({dragOrigin})
-	}, [dragOrigin])
+	// React.useEffect(() => {
+	// 	console.log({dragOrigin})
+	// }, [dragOrigin])
+
+	useWatch(props, 'DiatonicPianoRoll')
 
 	return (
 		<RollContext.Provider value={setDragOrigin}>

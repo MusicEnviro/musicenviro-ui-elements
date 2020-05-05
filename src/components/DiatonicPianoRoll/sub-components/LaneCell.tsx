@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cellPadding, stepTypeAppearance } from '../config';
 import styled from 'styled-components';
-import { DiatonicStepType } from '@musicenviro/base';
+import { DiatonicStepType, useWatch } from '@musicenviro/base';
 
 import { paletton } from './paletton';
 // import { RollContext } from '../DiatonicPianoRoll';
@@ -45,6 +45,8 @@ export const LaneCell: React.FunctionComponent<ILaneCellProps> = props => {
 		setShowActivated(props.activated);
 		setClickedHere(false)
 	}, [props.activated]);
+
+	useWatch(props, 'LaneCell')
 
 	const setDragOrigin = React.useContext(RollContext);
 
