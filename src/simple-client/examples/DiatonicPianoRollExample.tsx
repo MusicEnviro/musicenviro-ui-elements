@@ -20,7 +20,7 @@ export function DiatonicPianoRollExample() {
 			width={900}
 			stepRange={stepRange}
 			initialLanes={lanes}
-			onCellChange={(laneIndex, cellIndex, active) => {
+			onCellChange={(id, laneIndex, cellIndex, active) => {
 				console.log(laneIndex, cellIndex, active);
 				setLanes(modifyLaneCell(lanes, laneIndex, cellIndex, active));
 			}}

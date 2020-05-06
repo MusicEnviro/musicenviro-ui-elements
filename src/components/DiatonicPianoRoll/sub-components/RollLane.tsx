@@ -34,8 +34,6 @@ export const RollLane: React.FunctionComponent<IRollLaneProps> = props => {
 
 	useWatch(props, 'RollLane')
 
-
-
 	return (
 		<Lane style={{ height: props.height }}>
 			<LaneContents
