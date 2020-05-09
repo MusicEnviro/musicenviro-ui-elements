@@ -36,19 +36,14 @@ export interface IDiatonicPianoRollProps {
 
 export { ILaneData, ICellData } from './@types';
 
-// export const RollContext = React.createContext<{
-// mouseDown: boolean;
-// dragging: boolean;
-// setDragOrigin: (value: { laneIndex: number; cellIndex: number }) => void;
-// 	endDrag: (laneIndex: number, cellIndex: number) => void;
-// } | null>(null);
-
 export const RollContext = React.createContext<
 	(value: { laneIndex: number; cellIndex: number }) => void
 >(null);
 
 export const DiatonicPianoRoll: React.FunctionComponent<IDiatonicPianoRollProps> = React.memo(
 	props => {
+
+		// DEBUG
 		// const prevProps = React.useRef<IDiatonicPianoRollProps>();
 		// if (prevProps.current) {
 		// 	console.log(

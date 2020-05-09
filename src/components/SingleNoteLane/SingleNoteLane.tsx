@@ -36,7 +36,10 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		height: 50,
 		onChange: () => { console.log('change') }
 	} as ISingleNoteLaneProps;
-	
+
+	className: string = "single-note-lane";
+
+
 	keyMonitorCallback: KeyMonitor.Callback;
 
 	gridTree: IRhythmTree;
