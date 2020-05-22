@@ -1,4 +1,4 @@
-import { IRhythmTree } from "../../SingleNoteLane/trees";
+import { IRhythmTree } from "../../../musical-data/trees";
 
 export interface ICellData {
 	active: boolean;

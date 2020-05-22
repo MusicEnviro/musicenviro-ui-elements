@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
-import { IPoint, Pixels } from '@musicenviro/base';
+import { Pixels } from '@musicenviro/base';
 
 const dbRange = {
 	min: -60,

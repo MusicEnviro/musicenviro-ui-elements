@@ -1,11 +1,10 @@
+export type TreeNode = {
+	units: number;
+	subtree?: IRhythmTree;
+} | number;
+
 export interface IRhythmTree {
-	nodes: Array<
-		| {
-				units: number;
-				subtree: IRhythmTree;
-		  }
-		| number
-	>;
+	nodes: TreeNode[]
 }
 
 export interface ITreePoint {
@@ -19,6 +18,10 @@ export const tree44: IRhythmTree = {
 		subtree: { nodes: [...Array(2)].map(() => ({ units: 1, subtree: { nodes: [1, 1] } })) },
 	})),
 };
+
+export function nodeUnitLength(node: TreeNode) {
+	return typeof node === 'number' ? node : node.units
+}
 
 // -----------------------------------------------------------------------------
 // main

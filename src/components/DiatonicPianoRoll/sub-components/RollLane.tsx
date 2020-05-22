@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Pixels, DiatonicStepType, useWatch } from '@musicenviro/base';
 import styled from 'styled-components';
 import { lanePadding, stepTypeAppearance, cellPadding } from '../config';
-import { IRhythmTree, tree44, getRhythmPoints } from '../../SingleNoteLane/trees';
+import { IRhythmTree, tree44, getRhythmPoints } from '../../../musical-data/trees';
 import { LaneCell } from './LaneCell';
 import { ILaneData } from '../@types';
 

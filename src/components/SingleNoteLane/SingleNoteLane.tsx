@@ -8,7 +8,7 @@ import {
 } from '../../generic-components/LazyCanvasRedrawer/LazyCanvasRedrawer';
 import { drawLineP } from '../../graphics/canvas-drawing/drawLine';
 import { drawCircleP, drawCircle } from '../../graphics/canvas-drawing/drawCircle';
-import { IRhythmTree, ITreePoint, getRhythmPoints, tree44 } from './trees';
+import { IRhythmTree, ITreePoint, getRhythmPoints, tree44 } from '../../musical-data/trees';
 import * as React from 'react';
 import { rectCenter, KeyMonitor } from '@musicenviro/base';
 import { CanvasMouseManager, MouseArea } from '../../ui/CanvasMouseManager/CanvasMouseManager';

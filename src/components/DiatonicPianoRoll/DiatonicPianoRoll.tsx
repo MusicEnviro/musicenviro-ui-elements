@@ -14,7 +14,7 @@ import {
 import styled from 'styled-components';
 import { RollLane } from './sub-components/RollLane';
 import { lanePadding, stepTypeAppearance } from './config';
-import { tree44, getRhythmPoints } from '../SingleNoteLane/trees';
+import { tree44, getRhythmPoints } from '../../musical-data/trees';
 import { ILaneData } from './@types';
 
 const Roll = styled.div`
