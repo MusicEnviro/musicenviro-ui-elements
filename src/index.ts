@@ -7,3 +7,4 @@ export * from "./components/MultiNoteLanes/MultiNoteLanes";
 export * from "./components/DiatonicPianoRoll/DiatonicPianoRoll";
 export * from "./components/CellGridPreview/CellGridPreview";
 export * from "./components/VolumeKnob/VolumeKnob";
+export * from "./components/RhythmTreeEditor/RhythmTreeEditor";
