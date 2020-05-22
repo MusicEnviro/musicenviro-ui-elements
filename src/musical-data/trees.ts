@@ -1,4 +1,5 @@
 export type TreeNode = {
+	id?: number;
 	units: number;
 	subtree?: IRhythmTree;
 } | number;
@@ -23,9 +24,31 @@ export function nodeUnitLength(node: TreeNode) {
 	return typeof node === 'number' ? node : node.units
 }
 
-// -----------------------------------------------------------------------------
-// main
-// -----------------------------------------------------------------------------
+// supply a unique numeric id to every node. 
+// necessarily, convert numeric nodes to object nodes
+export function addIds(tree: IRhythmTree): IRhythmTree {
+	let idCounter = 0
+	return rec(tree);
+	
+	function rec(subtree: IRhythmTree): IRhythmTree {
+		return {
+			nodes: subtree.nodes.map(node => {
+				if (typeof node === 'number') {
+					return {
+						id: idCounter++,
+						units: node,
+					}
+				} else  {
+					return {
+						id: idCounter++,
+						units: node.units,
+						subtree: node.subtree ? rec(node.subtree) : null
+					}
+				} 
+			})
+		}
+	}
+}
 
 export function getRhythmPoints(
 	tree: IRhythmTree,
@@ -55,6 +78,9 @@ export function getRhythmPoints(
 	return result;
 }
 
+
+
+
 // -----------------------------------------------------------------------------
 // module-scope helpers
 // -----------------------------------------------------------------------------
@@ -62,6 +88,9 @@ export function getRhythmPoints(
 function numUnits(tree: IRhythmTree): number {
 	return tree.nodes.reduce((sum: number, node) => sum + (typeof node === 'number' ? node : node.units), 0) as number;
 }
+
+
+
 
 // -----------------------------------------------------------------------------
 // test

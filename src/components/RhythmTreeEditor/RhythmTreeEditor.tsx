@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
 import { Pixels, IRect } from '@musicenviro/base';
-import { IRhythmTree, tree44, nodeUnitLength } from '../../musical-data/trees';
+import { IRhythmTree, tree44, nodeUnitLength, addIds } from '../../musical-data/trees';
 
 interface IRhythmTreeEditorProps {
 	tree: IRhythmTree;
@@ -24,7 +24,7 @@ export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props
 
 	useEffect(() => {
 		// use different representation with an extra node above
-		setTree({ nodes: [{ units: 1, subtree: props.tree }] });
+		setTree(addIds({ nodes: [{ units: 1, subtree: props.tree }] }));
 	}, [props]);
 
 	useEffect(() => {
@@ -55,6 +55,7 @@ interface IBlock {
 	rect: IRect;
 	depth: number;
 	unitLength: number;
+	id?: number;
 }
 
 function drawBlocksInCanvas(ctx: CanvasRenderingContext2D, blocks: IBlock[]) {
@@ -81,7 +82,7 @@ function drawBlocksInCanvas(ctx: CanvasRenderingContext2D, blocks: IBlock[]) {
 
 		ctx.fillStyle = 'white';
 		ctx.fillText(
-			block.unitLength.toString(),
+			block.id.toString(),
 			(rect.left + rect.right) / 2,
 			(rect.bottom + rect.top) / 2,
 		);
@@ -96,7 +97,7 @@ function treeToBlocks(tree: IRhythmTree, depth: number): IBlock[] {
 	const result: IBlock[] = [];
 
 	tree.nodes.forEach((node, i) => {
-		if (typeof node === 'number') {
+		if (typeof node === 'number' || !node.subtree) {
 			result.push({
 				rect: {
 					left: edges[i],
@@ -105,7 +106,8 @@ function treeToBlocks(tree: IRhythmTree, depth: number): IBlock[] {
 					bottom: 1,
 				},
 				depth,
-				unitLength: node,
+				unitLength: nodeUnitLength(node),
+				id: typeof node === 'number' ? null : node.id 
 			});
 		} else {	
 			result.push(
@@ -118,6 +120,7 @@ function treeToBlocks(tree: IRhythmTree, depth: number): IBlock[] {
 					},
 					depth,
 					unitLength: node.units,
+					id: node.id
 				},
 				...fitBlocksToRect(treeToBlocks(node.subtree, depth + 1), {
 					left: edges[i],
