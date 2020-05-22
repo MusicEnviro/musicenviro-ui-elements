@@ -1,32 +1,32 @@
-import _ from 'lodash';
 import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
-import { Pixels, IRect } from '@musicenviro/base';
-import { IRhythmTree, tree44, nodeUnitLength, addIds } from '../../musical-data/trees';
+import { Pixels } from '@musicenviro/base';
+import { IRhythmTree, tree44, addIds, TreeObjectNode } from '../../musical-data/trees';
+import { treeToBlocks } from './treeToBlocks';
+import { IBlock } from './types';
+import { KeyMonitor } from '@musicenviro/base';
 
 interface IRhythmTreeEditorProps {
-	tree: IRhythmTree;
-
+	initialTree: IRhythmTree;
 	backgroundColor?: string;
 	width?: Pixels;
 	height?: Pixels;
+	onChange?: (newTree: IRhythmTree) => void;
 }
 
 const defaultProps: IRhythmTreeEditorProps = {
-	tree: tree44,
+	initialTree: tree44,
 	backgroundColor: 'lightgrey',
 	width: 900,
 	height: 400,
 };
 
 export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props => {
-	const canvasRef = useRef<HTMLCanvasElement>();
 	const [tree, setTree] = useState<IRhythmTree>();
 	const [blocks, setBlocks] = useState<IBlock[]>([]);
-	const [selectedId, setSelectedId] = useState<number>();
+	const [selectedId, setSelectedId] = useState<number>(null);
 
 	useEffect(() => {
-		// use different representation with an extra node above
-		setTree(addIds({ nodes: [{ units: 1, subtree: props.tree }] }));
+		setTree(addIds({ nodes: [{ units: 1, subtree: props.initialTree }] }));
 	}, [props]);
 
 	useEffect(() => {
@@ -35,24 +35,93 @@ export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props
 	}, [tree]);
 
 	useEffect(() => {
-		// redraw();
-	}, [blocks]);
+		const callback: KeyMonitor.Callback = (key, state) => {
+			if (state === 'Up' || typeof selectedId !== 'number') return;
+			switch (key) {
+				case 'ArrowRight':
+					if (selectedId !== 0) {
+						setTree(
+							changeNode(
+								tree,
+								selectedId,
+								node => ({ ...node, units: node.units + 1 }),
+								num => num + 1,
+							),
+						);
+					}
 
-	// canvas drawing, maybe deprecate
-	function redraw() {
-		if (!tree) return;
-		const ctx = canvasRef.current.getContext('2d');
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		drawBlocksInCanvas(ctx, blocks, selectedId);
-	}
+					break;
+				case 'ArrowLeft':
+					if (selectedId !== 0) {
+						setTree(
+							changeNode(
+								tree,
+								selectedId,
+								node => ({ ...node, units: node.units === 1 ? 1 : node.units - 1 }),
+								num => (num === 1 ? 1 : num - 1),
+							),
+						);
+						break;
+					}
+				case 'ArrowUp':
+					// remove last child node
+					setTree(
+						addIds(
+							changeNode(tree, selectedId, node => ({
+								...node,
+								subtree: node.subtree
+									? node.subtree.nodes.length === 1
+										? typeof node.subtree.nodes[0] === 'number'
+											? null
+											: node.subtree.nodes[0].subtree
+										: {
+												nodes: node.subtree.nodes.slice(0, -1),
+										  }
+									: null,
+							})),
+						),
+					);
+					break;
+
+				case 'ArrowDown':
+					// append child node
+					setTree(
+						addIds(
+							changeNode(tree, selectedId, node => ({
+								...node,
+								subtree: {
+									nodes: [
+										...(node.subtree ? node.subtree.nodes : []),
+										{ units: 1, subtree: null },
+									],
+								},
+							})),
+						),
+					);
+					break;
+					
+				case 'Backspace':
+					if (selectedId !== 0) {
+						setTree(deleteNode(tree, selectedId));
+						setSelectedId(Math.max(0, selectedId - 1));
+						break;
+					}
+			}
+		};
+
+		KeyMonitor.onTransition(callback);
+		return () => KeyMonitor.removeListener(callback);
+	}, [selectedId, tree]);
 
 	return (
 		<div
 			className="rhtyhm-tree-editor"
 			style={{ position: 'relative', width: props.width, height: props.height }}
+			onMouseLeave={() => setSelectedId(null)}
 		>
 			{...blocks.map(block => (
 				<div
+					key={block.id}
 					style={{
 						position: 'absolute',
 
@@ -67,7 +136,6 @@ export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props
 						textAlign: 'center',
 						color: 'white',
 					}}
-
 					onClick={() => setSelectedId(block.id)}
 				>
 					<p
@@ -81,13 +149,6 @@ export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props
 					</p>
 				</div>
 			))}
-
-			{/* <canvas
-				ref={canvasRef}
-				width={props.width}
-				height={props.height}
-				style={{ backgroundColor: props.backgroundColor, borderRadius: 3 }}
-			></canvas> */}
 		</div>
 	);
 
@@ -97,107 +158,41 @@ export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props
 };
 RhythmTreeEditor.defaultProps = defaultProps;
 
-interface IBlock {
-	rect: IRect;
-	depth: number;
-	unitLength: number;
-	id?: number;
-}
-
-function drawBlocksInCanvas(ctx: CanvasRenderingContext2D, blocks: IBlock[], selectedId) {
-	const padding = 2;
-
-	ctx.font = '12px Arial';
-	ctx.textAlign = 'center';
-
-	blocks.forEach(block => {
-		const rect = {
-			left: block.rect.left * ctx.canvas.width,
-			top: block.rect.top * ctx.canvas.height,
-			right: block.rect.right * ctx.canvas.width,
-			bottom: block.rect.bottom * ctx.canvas.height,
-		};
-
-		ctx.fillStyle = getColor(block, block.id === selectedId);
-		ctx.fillRect(
-			rect.left + padding,
-			rect.top + padding,
-			rect.right - rect.left - padding * 2,
-			rect.bottom - rect.top - padding * 2,
-		);
-
-		ctx.fillStyle = 'white';
-		ctx.fillText(
-			block.id.toString(),
-			(rect.left + rect.right) / 2,
-			(rect.bottom + rect.top) / 2,
-		);
-	});
-}
-
-function getColor(block: IBlock, selected: boolean): string {
-	const byte = selected ? 255 - block.depth * 40 : 175 - block.depth * 20;
+export function getColor(block: IBlock, selected: boolean): string {
+	const byte = selected ? 225 - block.depth * 30 : 175 - block.depth * 20;
 	return selected ? `rgb(${byte}, 0, 0)` : `rgb(${byte}, ${byte}, ${byte})`;
 }
 
-function treeToBlocks(tree: IRhythmTree, depth: number): IBlock[] {
-	const proportions = tree.nodes.map(nodeUnitLength);
-	const total = proportions.reduce((sum, p) => sum + p, 0);
-	const edges = proportions.reduce((accum, p) => [...accum, _.last(accum) + p / total], [0]);
-
-	const result: IBlock[] = [];
-
-	tree.nodes.forEach((node, i) => {
-		if (typeof node === 'number' || !node.subtree) {
-			result.push({
-				rect: {
-					left: edges[i],
-					top: 0,
-					right: edges[i + 1],
-					bottom: 1,
-				},
-				depth,
-				unitLength: nodeUnitLength(node),
-				id: typeof node === 'number' ? null : node.id,
-			});
-		} else {
-			result.push(
-				{
-					rect: {
-						left: edges[i],
-						top: 0,
-						right: edges[i + 1],
-						bottom: 0.3,
-					},
-					depth,
-					unitLength: node.units,
-					id: node.id,
-				},
-				...fitBlocksToRect(treeToBlocks(node.subtree, depth + 1), {
-					left: edges[i],
-					top: 0.3,
-					right: edges[i + 1],
-					bottom: 1,
-				}),
-			);
-		}
-	});
-
-	console.log({ tree, depth, result });
-	return result;
+function changeNode(
+	tree: IRhythmTree,
+	id: number,
+	modifier: (node: TreeObjectNode) => TreeObjectNode,
+	numericNodeModifier: (node: number) => TreeObjectNode | number = n => n,
+): IRhythmTree {
+	return {
+		nodes: tree.nodes.map(node => {
+			if (typeof node === 'number') return numericNodeModifier(node);
+			if (node.id === id) return modifier(node);
+			return {
+				...node,
+				subtree: node.subtree ? changeNode(node.subtree, id, modifier) : null,
+			};
+		}),
+	};
 }
 
-function fitBlocksToRect(blocks: IBlock[], rect: IRect): IBlock[] {
-	const result = blocks.map(block => ({
-		...block,
-		rect: {
-			left: rect.left + block.rect.left * (rect.right - rect.left),
-			top: rect.top + block.rect.top * (rect.bottom - rect.top),
-			right: rect.left + block.rect.right * (rect.right - rect.left),
-			bottom: rect.top + block.rect.bottom * (rect.bottom - rect.top),
-		},
-	}));
-
-	console.log({ blocks, rect, result });
-	return result;
+function deleteNode(tree: IRhythmTree, id: number): IRhythmTree {
+	// a bit inefficient because it keeps searching even once the id has been found, but ...
+	return addIds({
+		nodes: tree.nodes
+			.map(node => {
+				if (typeof node === 'number') return node;
+				if (node.id === id) return null;
+				return {
+					...node,
+					subtree: node.subtree ? deleteNode(node.subtree, id) : null,
+				};
+			})
+			.filter(Boolean),
+	});
 }

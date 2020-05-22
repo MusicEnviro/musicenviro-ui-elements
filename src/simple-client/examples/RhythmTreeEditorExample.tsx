@@ -47,5 +47,5 @@ const exampleTree2 = {
 };
 
 export function RhythmTreeEditorExample() {
-	return <RhythmTreeEditor tree={exampleTree2} />;
+	return <RhythmTreeEditor initialTree={exampleTree2} />;
 }

@@ -1,8 +1,10 @@
-export type TreeNode = {
+export interface TreeObjectNode {
 	id?: number;
 	units: number;
 	subtree?: IRhythmTree;
-} | number;
+}
+
+export type TreeNode = TreeObjectNode | number;
 
 export interface IRhythmTree {
 	nodes: TreeNode[]
