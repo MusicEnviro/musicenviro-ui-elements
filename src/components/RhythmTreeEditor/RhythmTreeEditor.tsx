@@ -115,7 +115,7 @@ export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props
 
 	return (
 		<div
-			className="rhtyhm-tree-editor"
+			className="rhythm-tree-editor"
 			style={{ position: 'relative', width: props.width, height: props.height }}
 			onMouseLeave={() => setSelectedId(null)}
 		>
