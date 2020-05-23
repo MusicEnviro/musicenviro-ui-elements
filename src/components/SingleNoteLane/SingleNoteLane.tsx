@@ -31,6 +31,7 @@ const padding = 25;
 export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	static defaultProps = {
 		notes: [],
+		tree: tree44,
 		noteColor: 'red',
 		width: 750,
 		height: 50,
@@ -50,7 +51,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 
 	constructor(props: ISingleNoteLaneProps) {
 		super(props);
-		this.setGridTree(tree44);
+		this.setGridTree(props.tree);
 	}
 
 	setGridTree(tree: IRhythmTree) {
@@ -105,13 +106,17 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		// console.log('SingleNoteLane MOUNTING')
 		
 		this.mouseManager.initialize(this.ref.current);
-		this.addAreas();
 		this.setupKeyEvents();
 		
+		this.setGridTree(this.props.tree)
+		this.setAreas();
+		this.redraw(true)
 	}
 	
 	componentDidUpdate() {
 		// console.log('SingleNoteLane UPDATING')
+		this.setGridTree(this.props.tree)
+		this.setAreas();
 		this.redraw(true)
 	}
 
@@ -134,7 +139,8 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		KeyMonitor.removeListener(this.keyMonitorCallback)
 	}
 
-	addAreas() {
+	setAreas() {
+		this.mouseManager.areas = [];
 		this.gridTreePoints.forEach((treePoint, i) => {
 			const pos = treePoint.position;
 			const prop = { x: pos, y: 0.5 };

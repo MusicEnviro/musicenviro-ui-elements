@@ -18,8 +18,53 @@ export interface ITreePoint {
 export const tree44: IRhythmTree = {
 	nodes: [...Array(4)].map(() => ({
 		units: 1,
-		subtree: { nodes: [...Array(2)].map(() => ({ units: 1, subtree: { nodes: [1, 1] } })) },
+		subtree: { nodes: [1,1,1,1] }
+		// subtree: { nodes: [...Array(2)].map(() => ({ units: 1, subtree: { nodes: [1, 1] } })) },
 	})),
+};
+
+export const exampleTree1 = {
+	nodes: [
+		1,
+		{
+			units: 1,
+			subtree: {
+				nodes: [1, 1],
+			},
+		},
+	],
+};
+
+export const exampleTree2 = {
+	nodes: [
+		{
+			units: 1,
+			subtree: {
+				nodes: [1, 1, 1],
+			},
+		},
+		{
+			units: 2,
+			subtree: {
+				nodes: [
+					1,
+					1,
+					{
+						units: 3,
+						subtree: {
+							nodes: [1, 1, 1, 1],
+						},
+					},
+				],
+			},
+		},
+		{
+			units: 1,
+			subtree: {
+				nodes: [1, 1, 1, 1],
+			},
+		},
+	],
 };
 
 export function nodeUnitLength(node: TreeNode) {

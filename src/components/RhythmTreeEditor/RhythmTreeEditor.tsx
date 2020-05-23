@@ -21,13 +21,20 @@ const defaultProps: IRhythmTreeEditorProps = {
 };
 
 export const RhythmTreeEditor: FunctionComponent<IRhythmTreeEditorProps> = props => {
-	const [tree, setTree] = useState<IRhythmTree>();
+	const [tree, _setTree] = useState<IRhythmTree>();
+	
+	const setTree = (tree: IRhythmTree) => {
+		props.onChange && props.onChange((tree.nodes[0] as TreeObjectNode).subtree);
+		_setTree(tree)
+	}
+	
 	const [blocks, setBlocks] = useState<IBlock[]>([]);
 	const [selectedId, setSelectedId] = useState<number>(null);
 
 	useEffect(() => {
-		setTree(addIds({ nodes: [{ units: 1, subtree: props.initialTree }] }));
-	}, [props]);
+		// _setTree(addIds(props.initialTree));
+		_setTree(addIds({ nodes: [{ units: 1, subtree: props.initialTree }] }));
+	}, [props.initialTree]);
 
 	useEffect(() => {
 		if (!tree) return;
