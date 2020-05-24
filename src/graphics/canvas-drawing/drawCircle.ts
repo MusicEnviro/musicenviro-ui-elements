@@ -14,6 +14,7 @@ export function drawCircle(
 	ctx.globalAlpha = alpha;
 	ctx.beginPath();
 	ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+	
 	if (filled) {
 		ctx.fillStyle = color;
 		ctx.fill();
@@ -22,6 +23,7 @@ export function drawCircle(
 		ctx.strokeStyle = color;
 		ctx.stroke();
 	}
+
 	ctx.restore();
 }
 
@@ -43,6 +45,7 @@ export function drawCircleP(
 	alpha: number = 1
 ) {
 	const smallDim = Math.min(ctx.canvas.width, ctx.canvas.height);
+
 	drawCircle(
 		ctx,
 		propToAbs(ctx, center, propOptions || undefined),

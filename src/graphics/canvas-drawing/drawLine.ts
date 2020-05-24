@@ -14,6 +14,7 @@ export function drawLine(
 	ctx.lineWidth = width;
 	ctx.setLineDash(dash);
 
+	ctx.beginPath();
 	ctx.moveTo(start.x, start.y);
 	ctx.lineTo(end.x, end.y);
 	ctx.stroke();

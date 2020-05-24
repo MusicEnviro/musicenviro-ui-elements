@@ -108,9 +108,9 @@ export function getRhythmPoints(
 	const result: ITreePoint[] = [];
 
 	tree.nodes.forEach((node, i) => {
-		if (typeof node === 'number') {
+		if (typeof node === 'number' || !node.subtree) {
 			result.push({ position, depth: i === 0 ? depth : depth + 1 });
-			position += unitSize * node;
+			position += unitSize * nodeUnitLength(node);
 		} else {
 			const nextDepth = getRhythmPoints(node.subtree, depth + 1, position, unitSize * node.units);
 

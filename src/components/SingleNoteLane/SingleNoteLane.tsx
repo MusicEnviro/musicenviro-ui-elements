@@ -13,17 +13,27 @@ import * as React from 'react';
 import { rectCenter, KeyMonitor } from '@musicenviro/base';
 import { CanvasMouseManager, MouseArea } from '../../ui/CanvasMouseManager/CanvasMouseManager';
 import { propToAbs, absToProp } from '../../graphics/canvas-drawing/convert';
-import { ISingleNoteLaneProps } from './@types';
+import { ILazyCanvasRedrawerProps } from '../../generic-components/LazyCanvasRedrawer/types';
 
 // =============================================================================
 // config
 // =============================================================================
 
-
 const radii = [7, 5, 3, 2];
-const tickSizes = [0.2, 0.15, 0.075, 0.05];
 const hoverAreaRadius = 15;
 const padding = 25;
+
+// -----------------------------------------------------------------------------
+// types
+// -----------------------------------	------------------------------------------
+
+export interface ISingleNoteLaneProps extends ILazyCanvasRedrawerProps {
+	notes?: number[]; // index of gridTreePoints, derived from rhythm tree (tips of branches)
+	tree?: IRhythmTree;
+	onChange?: (notes: number[]) => void;
+	noteColor?: string;
+}
+
 // =============================================================================
 // main
 // =============================================================================
@@ -35,11 +45,12 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		noteColor: 'red',
 		width: 750,
 		height: 50,
-		onChange: () => { console.log('change') }
+		onChange: () => {
+			console.log('change');
+		},
 	} as ISingleNoteLaneProps;
 
-	className: string = "single-note-lane";
-
+	className: string = 'single-note-lane';
 
 	keyMonitorCallback: KeyMonitor.Callback;
 
@@ -66,11 +77,11 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 			drawCircle(ctx, rectCenter(area.rect), hoverAreaRadius, 'gray', false, [3, 3]);
 		});
 
-		this.props.notes.forEach(pos => {
+		this.props.notes.forEach(note => {
 			drawCircleP(
 				ctx,
 				{ padding, fixedRadius: true },
-				{ x: pos, y: 0.5 },
+				{ x: this.gridTreePoints[note].position, y: 0.5 },
 				hoverAreaRadius - 2,
 				this.props.noteColor,
 				true,
@@ -79,14 +90,6 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		});
 
 		this.gridTreePoints.forEach(point => {
-			// drawLineP(
-			// 	ctx,
-			// 	{ padding },
-			// 	{ x: point.position, y: 0.5 + tickSizes[point.depth] * 0.5 },
-			// 	{ x: point.position, y: 0.5 - tickSizes[point.depth] * 0.5 },
-			// 	'gray'
-			// );
-
 			drawCircleP(
 				ctx,
 				{ padding, fixedRadius: true },
@@ -98,30 +101,29 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		});
 	}
 
-	img: HTMLImageElement;
-
 	componentDidMount() {
 		super.componentDidMount();
 
 		// console.log('SingleNoteLane MOUNTING')
-		
+
 		this.mouseManager.initialize(this.ref.current);
 		this.setupKeyEvents();
-		
-		this.setGridTree(this.props.tree)
+
+		this.setGridTree(this.props.tree);
 		this.setAreas();
-		this.redraw(true)
+		this.redraw(true);
 	}
-	
+
 	componentDidUpdate() {
 		// console.log('SingleNoteLane UPDATING')
-		this.setGridTree(this.props.tree)
+
+		this.setGridTree(this.props.tree);
 		this.setAreas();
-		this.redraw(true)
+		this.redraw(true);
 	}
 
 	componentWillUnmount() {
-		this.disposeKeyEvents()
+		this.disposeKeyEvents();
 	}
 
 	private setupKeyEvents() {
@@ -131,12 +133,12 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 					this.updateHighlights();
 					break;
 			}
-		}
+		};
 		KeyMonitor.onTransition(this.keyMonitorCallback);
 	}
 
 	private disposeKeyEvents() {
-		KeyMonitor.removeListener(this.keyMonitorCallback)
+		KeyMonitor.removeListener(this.keyMonitorCallback);
 	}
 
 	setAreas() {
@@ -158,7 +160,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 
 			area.onMouseEnter(() => this.updateHighlights());
 			area.onMouseLeave(() => this.updateHighlights());
-			area.onMouseDown(() => this.toggleNote(pos));
+			area.onMouseDown(() => this.toggleNote(i));
 
 			treePoint.area = area;
 		});
@@ -183,21 +185,34 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 	}
 
 	multiplyPoint(point: ITreePoint): Array<ITreePoint & { area?: MouseArea }> {
-		const division = (point.position * 16) % 4;
-		return [0, 1, 2, 3].map(beat => this.gridTreePoints[beat * 4 + division]);
+		// pretty unconvential behaviour if the grid is not straight 16th notes!
+		const pointIndex = this.gridTreePoints.indexOf(point);
+		if (pointIndex === -1) throw new Error('point not found');
+
+		const len = this.gridTreePoints.length;
+		const indexes = new Set<number>(
+			[0, 1, 2, 3].map(
+				beat => (pointIndex + Math.floor((beat * len) / 4)) % this.gridTreePoints.length,
+			),
+		);
+
+		return [...indexes].map(i => this.gridTreePoints[i]);
 	}
 
-	toggleNote(pos: number) {
-		const index = this.props.notes.indexOf(pos);
-		let newNotes
+	toggleNote(index: number) {
+		let newNotes;
 
-		if (index === -1) {
-			newNotes = [...this.props.notes, ...[...this.highlights].map(area => area.id * 0.0625)]
+		if (this.props.notes.includes(index)) {
+			newNotes = this.props.notes.filter(
+				note => ![...this.highlights].map(area => area.id).includes(note),
+			);
 		} else {
-			newNotes = this.props.notes.filter(pos => ![...this.highlights].map(area => area.id * 0.0625).includes(pos));
+			newNotes = [
+				...new Set([...this.props.notes, ...[...this.highlights].map(area => area.id)]),
+			];
 		}
 
-		this.props.onChange(newNotes)
+		this.props.onChange(newNotes);
 		// this.props.notes = newNotes
 		// this.props.onChange([...this.notes, pos])
 		// this.redraw();
@@ -220,4 +235,3 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		this.redraw(true);
 	}
 }
-
