@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { PianoKeyboard } from '../components/PianoKeyboard/PianoKeyboard';
 import { GuitarChordDiagram } from '../components/GuitarChordDiagram/GuitarChordDiagram';
-import { SingleNoteLane } from '../components/SingleNoteLane/SingleNoteLane';
 import { ButtonGridExample } from './examples/ButtonGridExample';
 import { MultiNoteLanes } from '../components/MultiNoteLanes/MultiNoteLanes';
-import { DiatonicPianoRoll } from '../components/DiatonicPianoRoll/DiatonicPianoRoll';
-import { DiatonicPianoRollExample } from './examples/DiatonicPianoRollExample';
+import { PianoRollExample } from './examples/PianoRollExample';
 import { VolumeKnob } from '../components/VolumeKnob/VolumeKnob';
 import { RhythmTreeEditorExample } from './examples/RhythmTreeEditorExample';
 import { SingleNoteLaneExample } from './examples/SingleNoteLaneExample';
 import { Test } from './examples/Test';
+import { DiatonicPianoRoll } from '../components/DiatonicPianoRoll/DiatonicPianoRoll';
 
 type UIElement =
 	| 'PianoKeyboard'
@@ -17,6 +16,7 @@ type UIElement =
 	| 'SingleNoteLane'
 	| 'MultiNoteLanes'
 	| 'DiatonicPianoRoll'
+	| 'PianoRoll'
 	| 'ButtonGrid'
 	| 'VolumeKnob'
 	| 'RhythmTreeEditor'
@@ -28,6 +28,7 @@ const uiElements = [
 	'SingleNoteLane',
 	'MultiNoteLanes',
 	'DiatonicPianoRoll',
+	'PianoRoll',
 	'ButtonGrid',
 	'VolumeKnob',
 	'RhythmTreeEditor',
@@ -35,7 +36,7 @@ const uiElements = [
 ];
 
 export function SimpleClient() {
-	const [element, setElement] = React.useState<UIElement>('Test');
+	const [element, setElement] = React.useState<UIElement>('PianoRoll');
 
 	function getUIElement() {
 		switch (element) {
@@ -50,7 +51,9 @@ export function SimpleClient() {
 			case 'MultiNoteLanes':
 				return <MultiNoteLanes />;
 			case 'DiatonicPianoRoll':
-				return <DiatonicPianoRollExample />
+				return <DiatonicPianoRoll />
+			case 'PianoRoll':
+				return <PianoRollExample />
 			case 'VolumeKnob':
 				return <VolumeKnob size={30}/>;
 			case 'RhythmTreeEditor':

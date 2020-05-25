@@ -7,8 +7,8 @@ export function drawCircle(
 	radius: number,
 	color: string = 'black',
 	filled: boolean = false,
-	dash: number[] = [],
 	alpha: number = 1,
+	dash: number[] = [],
 ) {
 	ctx.save();
 	ctx.globalAlpha = alpha;
@@ -42,7 +42,8 @@ export function drawCircleP(
 	radius: number,
 	color: string = 'black',
 	filled: boolean = false,
-	alpha: number = 1
+	alpha: number = 1,
+	dash: number[] = [],
 ) {
 	const smallDim = Math.min(ctx.canvas.width, ctx.canvas.height);
 
@@ -52,7 +53,7 @@ export function drawCircleP(
 		propOptions.fixedRadius ? radius : radius * smallDim,
 		color,
 		filled,
-		[],
 		alpha,
+		dash,
 	);
 }

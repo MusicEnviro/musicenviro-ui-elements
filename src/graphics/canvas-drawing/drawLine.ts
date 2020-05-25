@@ -9,6 +9,8 @@ export function drawLine(
 	width: number = 1,
 	dash: number[] = []
 ) {
+
+	
 	// could be a bit inefficient.
 	ctx.strokeStyle = color;
 	ctx.lineWidth = width;
@@ -25,12 +27,14 @@ export function drawLineP(
 	propOptions: IPropOptions,
 	start: IPoint,
 	end: IPoint,
-	...args: any[]
+	color: string = "black",
+	width: number = 1,
+	dash: number[] = []
 ) {
 	drawLine(
 		ctx,
 		propToAbs(ctx, start, propOptions || undefined),  // convert null to undefined so we get the default
 		propToAbs(ctx, end, propOptions || undefined),
-		...args
+		color, width, dash
 	);
 }

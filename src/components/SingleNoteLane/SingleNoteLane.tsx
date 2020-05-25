@@ -74,7 +74,7 @@ export class SingleNoteLane extends LazyCanvasRedrawer<ISingleNoteLaneProps> {
 		drawLineP(ctx, { padding }, { x: 0, y: 0.5 }, { x: 1, y: 0.5 }, 'gray');
 
 		this.highlights.forEach(area => {
-			drawCircle(ctx, rectCenter(area.rect), hoverAreaRadius, 'gray', false, [3, 3]);
+			drawCircle(ctx, rectCenter(area.rect), hoverAreaRadius, 'gray', false, 1, [3, 3]);
 		});
 
 		this.props.notes.forEach(note => {

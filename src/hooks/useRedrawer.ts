@@ -3,16 +3,23 @@ import React, { useRef, useState, useEffect } from 'react';
 type Timestamp = number;
 type Milliseconds = number;
 
+
+/**
+ * usage: const [canvasRef] = useRedrawer<IComponentProps>(props, drawFn, 100, [props])
+ * or with more restricted props to pass to the draw function and/or to use
+ * as dependencies for the useEffect hook.
+ */
 export function useRedrawer<TProps>(
-	props: TProps,
+	props: TProps,  // is this necessary ???
 	drawFn: (ctx: CanvasRenderingContext2D, props: TProps) => void,
 	maximumDrawInterval: Milliseconds,
 	deps?: React.DependencyList,
 ): [React.MutableRefObject<HTMLCanvasElement>] {
-	const [lastDraw, setLastDraw] = useState<Timestamp>();
-	const [timerRunning, setTimerRunning] = useState<boolean>(false);
 
 	const canvasRef = useRef<HTMLCanvasElement>();
+
+	const [lastDraw, setLastDraw] = useState<Timestamp>();
+	const [timerRunning, setTimerRunning] = useState<boolean>(false);
 	const timer = useRef<NodeJS.Timer>();
 
 	function redraw() {
@@ -23,9 +30,7 @@ export function useRedrawer<TProps>(
 	}
 
 	useEffect(() => {
-        console.log('deps changed')
-
-		if (timerRunning) {
+        if (timerRunning) {
 			clearTimeout(timer.current);
 			setTimerRunning(false);
 		}
