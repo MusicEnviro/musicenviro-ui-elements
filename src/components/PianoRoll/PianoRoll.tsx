@@ -75,7 +75,12 @@ export const PianoRoll: React.FunctionComponent<IPianoRollProps> = props => {
 	const [hoverNotes, setHoverNotes] = useState<IRollNote[]>([]);
 
 	useEffect(() => setNotes(props.initialNotes), [props.initialNotes]);
-	useEffect(() => setTreePoints(getRhythmPoints(props.tree)), [props.tree]);
+
+	useEffect(() => {
+		const treePoints = getRhythmPoints(props.tree);
+		setTreePoints(treePoints);
+		setNotes(notes => notes.filter(note => note.treePointIndex < treePoints.length));
+	}, [props.tree]);
 
 	const [canvasRef] = useRedrawer<{}>({}, draw, 50, [notes, treePoints, hoverNotes]);
 
@@ -108,35 +113,6 @@ export const PianoRoll: React.FunctionComponent<IPianoRollProps> = props => {
 		},
 		[notes, hoverNotes],
 	);
-
-	// useCanvasMouse(
-	// 	canvasRef,
-	// 	{
-	// 		onMouseMove: (point: IPoint) => {
-	// 			const proportionalPoint = absToProp(canvasRef.current.getContext('2d'), point, {
-	// 				padding: props.padding,
-	// 			});
-
-	// 			const hover = getPianoRollHover(proportionalPoint, treePoints, props.stepRange);
-
-	// 			setHoverNotes(hover ? [hover] : []);
-	// 		},
-	// 		onMouseLeave: () => {
-	// 			setHoverNotes([]);
-	// 		},
-	// 		onMouseDown: (point: IPoint) => {
-	// 			// we can ignore the point and just activate the hovering notes.
-	// 			setNotes(existingNotes => {
-	// 				console.log('setting notes, there are', existingNotes.length, 'already')
-	// 				return _.uniqBy(
-	// 					[...existingNotes, ...hoverNotes],
-	// 					note => note.treePointIndex * 1000 + note.step, // unique number for coordinate
-	// 				);
-	// 			});
-	// 		},
-	// 	},
-	// 	[treePoints, props.stepRange, notes],
-	// );
 
 	function draw(ctx: CanvasRenderingContext2D) {
 		drawGrid();
