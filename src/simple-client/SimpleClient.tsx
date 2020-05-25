@@ -9,6 +9,7 @@ import { DiatonicPianoRollExample } from './examples/DiatonicPianoRollExample';
 import { VolumeKnob } from '../components/VolumeKnob/VolumeKnob';
 import { RhythmTreeEditorExample } from './examples/RhythmTreeEditorExample';
 import { SingleNoteLaneExample } from './examples/SingleNoteLaneExample';
+import { Test } from './examples/Test';
 
 type UIElement =
 	| 'PianoKeyboard'
@@ -18,7 +19,8 @@ type UIElement =
 	| 'DiatonicPianoRoll'
 	| 'ButtonGrid'
 	| 'VolumeKnob'
-	| 'RhythmTreeEditor';
+	| 'RhythmTreeEditor'
+	| 'Test';
 
 const uiElements = [
 	'PianoKeyboard',
@@ -28,11 +30,12 @@ const uiElements = [
 	'DiatonicPianoRoll',
 	'ButtonGrid',
 	'VolumeKnob',
-	'RhythmTreeEditor'
+	'RhythmTreeEditor',
+	'Test',
 ];
 
 export function SimpleClient() {
-	const [element, setElement] = React.useState<UIElement>('SingleNoteLane');
+	const [element, setElement] = React.useState<UIElement>('Test');
 
 	function getUIElement() {
 		switch (element) {
@@ -52,6 +55,8 @@ export function SimpleClient() {
 				return <VolumeKnob size={30}/>;
 			case 'RhythmTreeEditor':
 				return <RhythmTreeEditorExample />
+			case 'Test':
+				return <Test />
 			default:
 				return <div>not implemented</div>;
 		}
