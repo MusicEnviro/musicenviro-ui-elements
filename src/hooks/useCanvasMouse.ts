@@ -1,32 +1,49 @@
-import { EventEmitter } from 'events';
 import React, { useEffect } from 'react';
 import { subtractPoints, IPoint } from '@musicenviro/base';
 
 export function useCanvasMouse(
     canvasRef: React.MutableRefObject<HTMLCanvasElement>,
-    events: {
+    _events: {
         onMouseMove?: (point: IPoint) => void;
-        onMouseLeave?: () => void;
+		onMouseLeave?: () => void;
+		onMouseDown?: (point: IPoint) => void;
+		onMouseUp?: (point: IPoint) => void;
 	},
 	deps: React.DependencyList = []
 ) {
+
+	const events = {
+		onMouseMove: () => {},
+		onMouseLeave: () => {},
+		onMouseDown: () => {},
+		onMouseUp: () => {},
+		..._events
+	}
+
 	useEffect(() => {
-		const handleMouseMove = (ev: MouseEvent) => {
-			const { left, top } = (ev.target as HTMLCanvasElement).getBoundingClientRect();
-			const relativePoint = subtractPoints(
-				{ x: ev.clientX, y: ev.clientY },
-				{ x: left, y: top },
-			);
-			events.onMouseMove(relativePoint);
-		};
+		
+		const handleMouseMove = (ev: MouseEvent): void => events.onMouseMove(getRelativePoint(ev));
+		const handleMouseDown = (ev: MouseEvent): void => events.onMouseDown(getRelativePoint(ev));
+		const handleMouseUp = (ev: MouseEvent): void => events.onMouseUp(getRelativePoint(ev));
 
-		const handleMouseLeave = (ev: MouseEvent) => {
-			events.onMouseLeave();
-		};
+		canvasRef.current.addEventListener('mouseleave', events.onMouseLeave);
+		canvasRef.current.addEventListener('mousemove', handleMouseMove)
+		canvasRef.current.addEventListener('mousedown', handleMouseDown)
+		canvasRef.current.addEventListener('mouseup', handleMouseUp)
+		
+		return () => {
+			canvasRef.current.removeEventListener('mouseleave', events.onMouseLeave);
+			canvasRef.current.removeEventListener('mousemove', handleMouseMove)
+			canvasRef.current.removeEventListener('mousedown', handleMouseDown)
+			canvasRef.current.removeEventListener('mouseup', handleMouseUp)
 
-		canvasRef.current.addEventListener('mousemove', handleMouseMove);
-        canvasRef.current.addEventListener('mouseleave', handleMouseLeave);
-        
-		return () => canvasRef.current.removeEventListener('mousemove', handleMouseMove);
+		}
+
 	}, deps);
+
+	function getRelativePoint(ev: MouseEvent) {
+		const { left, top } = (ev.target as HTMLCanvasElement).getBoundingClientRect();
+		const relativePoint = subtractPoints({ x: ev.clientX, y: ev.clientY }, { x: left, y: top });
+		return relativePoint;
+	}
 }

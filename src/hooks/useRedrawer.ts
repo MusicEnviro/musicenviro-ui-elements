@@ -20,16 +20,18 @@ export function useRedrawer<TProps>(
 
 	const [lastDraw, setLastDraw] = useState<Timestamp>();
 	const [timerRunning, setTimerRunning] = useState<boolean>(false);
+
 	const timer = useRef<NodeJS.Timer>();
 
-	function redraw() {
-		setLastDraw(Date.now());
-		const ctx = canvasRef.current.getContext('2d');
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-		drawFn(ctx, props);
-	}
 
 	useEffect(() => {
+		function redraw() {
+			setLastDraw(Date.now());
+			const ctx = canvasRef.current.getContext('2d');
+			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			drawFn(ctx, props);
+		}
+
         if (timerRunning) {
 			clearTimeout(timer.current);
 			setTimerRunning(false);
