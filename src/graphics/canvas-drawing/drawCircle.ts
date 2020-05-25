@@ -12,6 +12,7 @@ export function drawCircle(
 ) {
 	ctx.save();
 	ctx.globalAlpha = alpha;
+	ctx.lineWidth = 1;
 	ctx.beginPath();
 	ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
 	

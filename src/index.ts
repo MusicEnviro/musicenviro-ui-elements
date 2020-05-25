@@ -5,6 +5,7 @@ export * from "./components/ButtonGrid";
 export * from "./components/SingleNoteLane/SingleNoteLane";
 export * from "./components/MultiNoteLanes/MultiNoteLanes";
 export * from "./components/DiatonicPianoRoll/DiatonicPianoRoll";
+export * from "./components/PianoRoll/PianoRoll";
 export * from "./components/CellGridPreview/CellGridPreview";
 export * from "./components/VolumeKnob/VolumeKnob";
 export * from "./components/RhythmTreeEditor/RhythmTreeEditor";
