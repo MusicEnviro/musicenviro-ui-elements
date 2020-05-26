@@ -72,6 +72,10 @@ const defaultProps: Required<IPianoRollProps> = {
 export const PianoRoll: React.FunctionComponent<IPianoRollProps> = props => {
 	const [notes, setNotes] = useState<INote[]>(props.initialNotes);
 	const [treePoints, setTreePoints] = useState<ITreePoint[]>(getRhythmPoints(props.tree));
+
+	// first hoverNote should be the one the mouse is actually over
+	// there will be some others if we implement triads, other structures,
+	// with modifier keys.
 	const [hoverNotes, setHoverNotes] = useState<INote[]>([]);
 
 	useEffect(() => setNotes(props.initialNotes), [props.initialNotes]);
@@ -102,15 +106,19 @@ export const PianoRoll: React.FunctionComponent<IPianoRollProps> = props => {
 			},
 
 			onMouseDown: (point: IPoint) => {
-				// const proportionalPoint = absToProp(canvasRef.current.getContext('2d'), point, {
-				// 	padding: props.padding,
-				// });
-
-				// const hover = getPianoRollHover(proportionalPoint, treePoints, props.stepRange);
-
-				setNotes([...notes, ...hoverNotes]);
-				props.onChange([...notes, ...hoverNotes]);
+				function sameNote(note1: INote, note2: INote) {
+					return note1.step === note2.step && note1.treePointIndex === note2.treePointIndex
+				}
 				
+				const isDeletion = notes.some(
+					note => sameNote(note, hoverNotes[0]))
+
+				const newNotes = isDeletion 
+					? notes.filter(note => !hoverNotes.some(hn => sameNote(note, hn)))
+					: _.uniqBy([...notes, ...hoverNotes], note => note.treePointIndex * 100 + note.step)
+
+				setNotes(newNotes);
+				props.onChange(newNotes);
 			},
 		},
 		[notes, hoverNotes],
@@ -127,7 +135,7 @@ export const PianoRoll: React.FunctionComponent<IPianoRollProps> = props => {
 			treePoints.forEach(drawTreePointGridLine);
 			drawTreePointGridLine({ position: 1, depth: 0 });
 
-			let stepIndex = 0
+			let stepIndex = 0;
 			for (let step = props.stepRange.min; step <= props.stepRange.max; step++) {
 				drawStepGridLine(step, stepIndex++);
 			}
@@ -196,7 +204,7 @@ export const PianoRoll: React.FunctionComponent<IPianoRollProps> = props => {
 		}
 
 		function getRadius() {
-			return stepHeight * canvasRef.current.height / 2
+			return (stepHeight * canvasRef.current.height) / 2;
 		}
 	}
 
