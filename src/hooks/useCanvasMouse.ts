@@ -32,11 +32,11 @@ export function useCanvasMouse(
 		canvasRef.current.addEventListener('mouseup', handleMouseUp)
 		
 		return () => {
+			if (!canvasRef.current) return;
 			canvasRef.current.removeEventListener('mouseleave', events.onMouseLeave);
 			canvasRef.current.removeEventListener('mousemove', handleMouseMove)
 			canvasRef.current.removeEventListener('mousedown', handleMouseDown)
 			canvasRef.current.removeEventListener('mouseup', handleMouseUp)
-
 		}
 
 	}, deps);

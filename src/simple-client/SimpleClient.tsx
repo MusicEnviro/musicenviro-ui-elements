@@ -36,7 +36,7 @@ const uiElements = [
 ];
 
 export function SimpleClient() {
-	const [element, setElement] = React.useState<UIElement>('PianoRoll');
+	const [element, setElement] = React.useState<UIElement>('ButtonGrid');
 
 	function getUIElement() {
 		switch (element) {
