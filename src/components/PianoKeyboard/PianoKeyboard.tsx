@@ -50,7 +50,7 @@ export class PianoKeyboard extends LazyCanvasRedrawer<
 				this.setState(
 					{ depressedKeys: prevDep.filter(n => n !== key.pitch) },
 					() => {
-						this.props.onNoteUp(key.pitch);
+						this.props.onNoteUp(key.pitch, this.state.depressedKeys);
 					}
 				);
 				// TODO: get velocity from vertical click position
@@ -58,7 +58,7 @@ export class PianoKeyboard extends LazyCanvasRedrawer<
 				this.setState(
 					{ depressedKeys: [...prevDep, key.pitch] },
 					() => {
-						this.props.onNoteDown(key.pitch, 127);
+						this.props.onNoteDown(key.pitch, 127, this.state.depressedKeys);
 					}
 				);
 			}

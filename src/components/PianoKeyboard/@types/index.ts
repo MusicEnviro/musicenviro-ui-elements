@@ -9,8 +9,8 @@ export interface IKey {
 }
 
 export interface IPianoKeyboardProps extends ILazyCanvasRedrawerProps {
-	onNoteDown: (midiPitch: number, midiVelocity: number) => void;
-	onNoteUp: (midiPitch: number) => void;
+	onNoteDown: (midiPitch: number, midiVelocity: number, depressedKeys: number[]) => void;
+	onNoteUp: (midiPitch: number, depressedKeys: number[]) => void;
 	keyRange: IRange<MidiPitch>
 }
 

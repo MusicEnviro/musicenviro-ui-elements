@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PianoKeyboard } from '../components/PianoKeyboard/PianoKeyboard';
+import { PianoKeyboardExample } from './examples/PianoKeyboardExample';
 import { GuitarChordDiagram } from '../components/GuitarChordDiagram/GuitarChordDiagram';
 import { ButtonGridExample } from './examples/ButtonGridExample';
 import { MultiNoteLanes } from '../components/MultiNoteLanes/MultiNoteLanes';
@@ -10,17 +10,7 @@ import { SingleNoteLaneExample } from './examples/SingleNoteLaneExample';
 import { Test } from './examples/Test';
 import { DiatonicPianoRoll } from '../components/DiatonicPianoRoll/DiatonicPianoRoll';
 
-type UIElement =
-	| 'PianoKeyboard'
-	| 'GuitarChordDiagram'
-	| 'SingleNoteLane'
-	| 'MultiNoteLanes'
-	| 'DiatonicPianoRoll'
-	| 'PianoRoll'
-	| 'ButtonGrid'
-	| 'VolumeKnob'
-	| 'RhythmTreeEditor'
-	| 'Test';
+
 
 const uiElements = [
 	'PianoKeyboard',
@@ -36,12 +26,12 @@ const uiElements = [
 ];
 
 export function SimpleClient() {
-	const [element, setElement] = React.useState<UIElement>('ButtonGrid');
+	const [element, setElement] = React.useState<string>('ButtonGrid');
 
 	function getUIElement() {
 		switch (element) {
 			case 'PianoKeyboard':
-				return <PianoKeyboard />;
+				return <PianoKeyboardExample />;
 			case 'GuitarChordDiagram':
 				return <GuitarChordDiagram />;
 			case 'ButtonGrid':
@@ -77,7 +67,7 @@ export function SimpleClient() {
                 <select 
                     style={{fontSize: 18}}
 					value={element}
-					onChange={e => setElement((e.target as HTMLSelectElement).value as UIElement)}
+					onChange={e => setElement((e.target as HTMLSelectElement).value)}
 				>
 					{uiElements.map(name => (
 						<option key={name}>{name}</option>
